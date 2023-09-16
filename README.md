@@ -1,4 +1,4 @@
-# meduzzen_internship_backend
+# goit_llm
 
 ## Prerequisites
 Before you begin, ensure that you have the following prerequisites installed on your system:

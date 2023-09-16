@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "meduzzen-internship-backend"
+name = "goit_llm"
 version = "0.1.0"
 description = ""
 authors = ["Anton Holovin <54354764+Unfeir@users.noreply.github.com>"]
 readme = "README.md"
-packages = [{include = "meduzzen_internship_backend"}]
+packages = [{include = "goit_llm"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
