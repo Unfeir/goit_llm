@@ -1,0 +1,30 @@
+# Ignore general files
+.git
+.gitignore
+LICENSE
+README.md
+__pycache__
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.py[cod]
+
+# Ignore development files
+venv
+.env.sample
+*.log
+
+# Ignore Docker build artifacts
+Dockerfile
+docker-compose.yml
+docker-compose.yaml
+
+# Ignore database files
+*.db
+*.sqlite3
+.idea
+.DS_Store
+.pytest_cache
+
+

@@ -1,0 +1,43 @@
+[tool.poetry]
+name = "meduzzen-internship-backend"
+version = "0.1.0"
+description = ""
+authors = ["Anton Holovin <54354764+Unfeir@users.noreply.github.com>"]
+readme = "README.md"
+packages = [{include = "meduzzen_internship_backend"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = {extras = ["all"], version = "^0.100.0"}
+uvicorn = {extras = ["standart"], version = "^0.22.0"}
+asyncio = "^3.4.3"
+sqlalchemy = "^2.0.18"
+greenlet = "^2.0.2"
+redis = "^4.6.0"
+asyncpg = "^0.28.0"
+alembic = "^1.11.1"
+jinja2 = "^3.1.2"
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+cloudinary = "^1.33.0"
+pydantic = {extras = ["email"], version = "^2.0.3"}
+pydantic-settings = "^2.0.2"
+pyjwt = "^2.8.0"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+companies = "^1.0.0"
+
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+sphinx = "^7.0.1"
+pytest-cov = "^4.1.0"
+pytest-asyncio = "^0.21.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+
+
+[tool.pytest.ini_options]
+pythonpath = [".", "app"]
+asyncio_mode="auto"
