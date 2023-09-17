@@ -20,7 +20,7 @@ app = FastAPI()
 app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(pdffile.router)
-app.mount(f'{cwd}/app/templates', StaticFiles(directory='templates'), name='templates')
+app.mount(f'{cwd}/app/templates', StaticFiles(directory=f'{cwd}/app/templates'), name='templates')
 
 origins = [
     "http://localhost",
