@@ -25,6 +25,7 @@ pyjwt = "^2.8.0"
 python-jose = {extras = ["cryptography"], version = "^3.3.0"}
 companies = "^1.0.0"
 psycopg2-binary = "^2.9.7"
+pypdf2 = "^3.0.1"
 
 
 [tool.poetry.group.dev.dependencies]

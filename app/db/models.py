@@ -2,8 +2,19 @@ import enum
 
 from sqlalchemy import Boolean, Column, Enum, func, Integer, String
 from sqlalchemy.sql.sqltypes import DateTime
+from sqlalchemy.sql.schema import ForeignKey
 
 from db.db import Base
+
+
+class PDFfile(Base):
+    __tablename__ = 'pdffiles'
+    id = Column(Integer, primary_key=True)
+    filename = Column(String(50), nullable=False, unique=False)
+    context = Column(String, nullable=True)
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=True)
+    created_at = Column(DateTime, default=func.now())
+    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
 
 
 class UserRole(enum.Enum):
