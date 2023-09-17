@@ -1,3 +1,8 @@
+import sys
+import os 
+cwd = os.getcwd()
+sys.path.append(f'{cwd}/app')
+
 from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy import text
