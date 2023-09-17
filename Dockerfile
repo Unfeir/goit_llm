@@ -18,7 +18,6 @@ RUN poetry install --no-root
 RUN poetry shell
 
 COPY ./app .
-COPY ../tests ./tests
 COPY ../migrations ./migrations
 COPY alembic.ini .
 COPY ../docker ./docker
