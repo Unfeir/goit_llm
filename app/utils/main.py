@@ -4,21 +4,23 @@ cwd = os.getcwd()
 sys.path.append(f'{cwd}/app')
 
 from fastapi import FastAPI, Depends, HTTPException
+from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.orm import Session
 from sqlalchemy import text
 import uvicorn
-from sqlalchemy.orm import Session
 
 from conf.config import get_settings
 from db.db import get_db
 from services.loggs.loger import logger
-from routes import users, auth
+from routes import auth, users, pdffile
 
 app = FastAPI()
 
 app.include_router(auth.router)
 app.include_router(users.router)
-
+app.include_router(pdffile.router)
+app.mount(f'{cwd}/app/templates', StaticFiles(directory='templates'), name='templates')
 
 origins = [
     "http://localhost",
@@ -57,6 +59,7 @@ async def db_checker(db: Session = Depends(get_db)):
             raise HTTPException(status_code=500, detail='Database is not configured correctly.')
 
         return {'message': 'Welcome'}
+    
     except Exception:
         logger.error('Error connecting to the database.')
         raise HTTPException(status_code=500, detail='Error connecting to the database.')
@@ -65,3 +68,5 @@ async def db_checker(db: Session = Depends(get_db)):
 if __name__ == '__main__':
     credentials = get_settings()
     uvicorn.run('main:app', host=credentials.uvicorn_host, port=credentials.uvicorn_port, reload=True)
+
+# http://127.0.0.1:8000/docs

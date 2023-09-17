@@ -63,7 +63,4 @@ class UserCRUD(BasicCRUD):
         await db.refresh(user)
         logger.warning(f'update user profile {user.email} was banned')
         return user
-
-
-
-
+    

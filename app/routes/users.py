@@ -120,19 +120,20 @@ async def ban_user(
     return user
 
 
+# !!???????????????????????
 @router.patch('/avatar',
               response_model=UserResponse,
               dependencies=[Depends(allowed_all_roles_access)],
-              name='update user avatar')
+              name='Update user avatar')
 async def update_avatar_user(
-        file: UploadFile = File(),
-        current_user: User = Depends(AuthUser.get_current_user),
-        credentials: HTTPAuthorizationCredentials = Security(security),
-        db: Session = Depends(get_db)
-) -> User:
+                             file: UploadFile = File(),
+                             current_user: User = Depends(AuthUser.get_current_user),
+                             credentials: HTTPAuthorizationCredentials = Security(security),
+                             db: Session = Depends(get_db)
+                             ) -> User:
     typ = User.__name__
-    src_url: str = CloudImage.avatar_upload(file=file.file, typ=typ, email=current_user.email)
-    user: User = await UserCRUD.update_avatar(model=current_user, url=src_url, db=db)
+    src_url: str = CloudImage.avatar_upload(file=file.file, typ=typ, email=current_user.email)  # !!???????????????????????
+    user: User = await UserCRUD.update_avatar(model=current_user, url=src_url, db=db)  # !!???????????????????????
     return user
 
 
