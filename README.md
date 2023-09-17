@@ -1,5 +1,11 @@
 # goit_llm
+Study project. Application Large Language Model for PDF documents.
 
+[![MIT License](https://img.shields.io/badge/license-MIT-green)](https://github.com/Unfeir/goit_llm/LICENSE)
+![Version](https://img.shields.io/badge/version-v0.1.0-green)
+--
+
+....
 ## Prerequisites
 Before you begin, ensure that you have the following prerequisites installed on your system:
 
@@ -88,3 +94,26 @@ push migration:
 *Notice after initializing migrations, you must change the settings in the file:
 1) target_metadata = None - >  = Base.metadata
 2) config.set_main_option("sqlalchemy.url", SQLALCHEMY_DATABASE_URL)
+
+
+...
+
+## Application features
+
+...
+
+
+### Used technologies
+- Python (programming language)
+- FastAPI (web framework)
+- Uvicorn (ASGI server)
+......
+
+
+### Developers - Fast Rabbit Team
+- [Andrii Kylymnyk](https://github.com/theneonwhale)
+- [Anton Holovin](https://github.com/Unfeir)
+- [Denys Tantsiura](https://github.com/DenysTantsiura)
+
+#### License
+This project is licensed under the MIT License.
