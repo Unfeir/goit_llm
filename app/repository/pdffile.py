@@ -10,20 +10,22 @@ from sqlalchemy.orm import Session, selectinload
 from db.models import User, PDFfile
 from repository.basic import BasicCRUD
 from repository.users import UserCRUD
+from schemas.pdffile import PdfFileRequest
 from schemas.user import UserUpdate, UserFullUpdate
 from services.auth.password import AuthPassword
 from services.loggs.loger import logger
 from services.textprocessor import get_txt_from_pdf
 
+
 class PDFfiles(BasicCRUD):
 
-    @classmethod       # model=current_user, file=file.file, db=db
+    @classmethod  # model=current_user, file=file.file, db=db
     async def upload_pdffile(cls, user: User, file: UploadFile, db: Session) -> User:
         email = User.email
         user: Optional[User] = await UserCRUD.get_user_by_email(email=email, db=db)
 
         if user is not None:
-            print('\n*'*3)
+            print('\n*' * 3)
             print(file.filename)
             # file_type = file.filename.split('.')[-1].lower()
             # https://docs.python.org/2/library/tempfile.html
@@ -35,25 +37,30 @@ class PDFfiles(BasicCRUD):
                 with open(file_path, 'wb') as f:
                     f.write(await file.read())
 
-            else: 
+            else:
                 return {'file_text': f'Incorrect file-type. {file_type} not a PDF.'}
             # username = payload.get('username')
             # dummy_password = AuthPassword.get_hash_password(password=f'{email}{datetime.utcnow().timestamp()}')
             # password = payload.get('password', dummy_password)
             text = get_txt_from_pdf(file_path)
-            print('\n*'*3)
+            print('\n*' * 3)
             print(text)
-            pdffile = PDFfile(
-                              filename=file,
-                              context='text', # 'example.pdf'
-                              user_id=user.id,
-                              )
+            pdffile = PdfFileRequest(
+                filename=file.filename,
+                context=text,  # 'example.pdf'
+                user_id=user.id,
+            )
+            print(f'{pdffile=}')
+            # pdffile = {'filename': file,
+            #            'context': 'text',
+            #            'user_id': user.id}
             # del file
             pathlib.Path(file_path).unlink(missing_ok=True)
-
-            db.add(pdffile)
-            await db.commit()
-            await db.refresh(pdffile)
+            result = await cls.create_item(PDFfile, pdffile, db)
+            print(f'{result=}')
+            # db.add(pdffile)
+            # await db.commit()
+            # await db.refresh(pdffile)
             logger.warning(f'Upload PDF-file({file}) by User:  {email=}')
 
         return {'file_text': text}
@@ -86,7 +93,6 @@ class PDFfiles(BasicCRUD):
     # #     user = result.scalars().first()
     # #     return user
 
-
     # @classmethod
     # async def update_user_profile(cls, user: User, body: Union[UserUpdate, UserFullUpdate], db: Session) -> User:
     #     for field_name, value in body:
@@ -100,7 +106,6 @@ class PDFfiles(BasicCRUD):
 
     #     return user
 
-
     # @classmethod
     # async def ban_user(cls, user: User, active_status: bool,  db: Session) -> User:
     #     user.status_active = active_status
@@ -108,7 +113,5 @@ class PDFfiles(BasicCRUD):
     #     await db.refresh(user)
     #     logger.warning(f'update user profile {user.email} was banned')
     #     return user
-
-
 
 

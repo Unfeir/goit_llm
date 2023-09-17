@@ -23,7 +23,7 @@ router = APIRouter(prefix='/pdffiles', tags=['pdffiles'])
 
 
 @router.post('/uploadfile/',
-             response_model=UserResponse,
+             # response_model=UserResponse,
              dependencies=[Depends(allowed_all_roles_access)],
              name='Upload text from pdf-file.')
 async def create_upload_file(
@@ -35,6 +35,6 @@ async def create_upload_file(
     
     # typ = User.__name__
     # src_url: str = CloudImage.avatar_upload(file=file.file, typ=typ, email=current_user.email)
-    user: User = await PDFfiles.upload_pdffile(user=current_user, file=file, db=db)
+    user = await PDFfiles.upload_pdffile(user=current_user, file=file, db=db)
     return user
    

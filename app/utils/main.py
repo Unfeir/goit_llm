@@ -1,5 +1,5 @@
 import sys
-import os 
+import os
 cwd = os.getcwd()
 sys.path.append(f'{cwd}/app')
 
@@ -14,13 +14,15 @@ from conf.config import get_settings
 from db.db import get_db
 from services.loggs.loger import logger
 from routes import auth, users, pdffile
+import templates
 
 app = FastAPI()
 
 app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(pdffile.router)
-app.mount(f'{cwd}/app/templates', StaticFiles(directory=f'{cwd}/app/templates'), name='templates')
+app.mount(f'/templates', StaticFiles(directory=f'templates'), name='templates')
+# app.mount(f'/app/templates', StaticFiles(directory=f'/app/templates'), name='templates')
 
 origins = [
     "http://localhost",
