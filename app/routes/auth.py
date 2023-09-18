@@ -1,18 +1,17 @@
-from typing import Optional, Annotated, Union
+from typing import Annotated, Optional, Union
 
-from fastapi import APIRouter, Depends, HTTPException, status, Security
-from fastapi.security import HTTPAuthorizationCredentials, OAuth2PasswordRequestForm
-from sqlalchemy.orm import Session
-from services.auth.user import AuthUser, security
-from services.auth.token import AuthToken
-
+from conf.messages import Msg
 from db.db import get_db
 from db.models import User
+from fastapi import APIRouter, Depends, HTTPException, Security, status
+from fastapi.security import HTTPAuthorizationCredentials, OAuth2PasswordRequestForm
 from repository.users import UserCRUD
-from schemas.user import UserSignUp, UserResponse, Token
+from schemas.user import Token, UserResponse, UserSignUp
 from services.auth.password import AuthPassword
-from conf.messages import Msg
+from services.auth.token import AuthToken
+from services.auth.user import AuthUser, security
 from services.loggs.loger import logger
+from sqlalchemy.orm import Session
 
 router = APIRouter(prefix='/auth', tags=['auth'])
 
@@ -39,7 +38,7 @@ async def login(body: OAuth2PasswordRequestForm = Depends(), db: Session = Depen
     if not user:
         logger.error(f'{body.username} - {Msg.m_401_unauthorized.value}')
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=Msg.m_401_unauthorized.value)
-    if user.status_active == False:
+    if user.status_active is False:
         logger.error(f'{body.username} - {Msg.m_403_user_banned.value}')
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=Msg.m_403_user_banned.value)
     access_token: Annotated[str, Depends(AuthToken.oauth2_scheme)] = await AuthToken.create_token(data=user)

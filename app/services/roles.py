@@ -1,14 +1,13 @@
 from typing import List
 
-from fastapi import Depends, HTTPException, Request, status
-
-from db.models import UserRole, User
 from conf.messages import Msg
+from db.models import User, UserRole
+from fastapi import Depends, HTTPException, Request, status
 from services.auth.user import AuthUser
 
 
 class UserRoleAccess:
-    def __init__(self, allowed_roles: List[UserRole]):
+    def __init__(self, allowed_roles: List[UserRole]) -> None:
         self.allowed_roles = allowed_roles
 
     async def __call__(self, request: Request, current_user: User = Depends(AuthUser.get_current_user)):

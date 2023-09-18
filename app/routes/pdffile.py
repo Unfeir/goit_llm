@@ -1,40 +1,67 @@
-import pathlib
-from typing import List, Optional
+from typing import List
 
-from fastapi import APIRouter, Depends, File, HTTPException, Security, status, UploadFile
-from fastapi.security import HTTPAuthorizationCredentials
-from sqlalchemy.orm import Session
-
-from conf.messages import Msg
 from db.db import get_db
-from db.models import User, UserRole
-from repository.users import UserCRUD
-from repository.pdffile import PDFfiles
-from schemas.user import UserResponse, UserUpdate, UserFullUpdate
+from db.models import User
+from fastapi import APIRouter, Depends, File, Query, Security, UploadFile, status
+from fastapi.security import HTTPAuthorizationCredentials
+from schemas.pdffile import PdfFileResponse
 from services.auth.user import AuthUser, security
-from services.images import CloudImage
-from services.loggs.loger import logger
-from services.roles import allowed_all_roles_access, allowed_admin
-
-# from services.textprocessor import get_txt_from_pdf
-
+from services.pdf_controller import PDFController
+from services.roles import allowed_all_roles_access
+from sqlalchemy.orm import Session
 
 router = APIRouter(prefix='/pdffiles', tags=['pdffiles'])
 
 
-@router.post('/uploadfile/',
-             # response_model=UserResponse,
+@router.post('/',
+             response_model=PdfFileResponse,
              dependencies=[Depends(allowed_all_roles_access)],
              name='Upload text from pdf-file.')
 async def create_upload_file(
-                             file: UploadFile = File(),
-                             current_user: User = Depends(AuthUser.get_current_user),
-                             credentials: HTTPAuthorizationCredentials = Security(security),
-                             db: Session = Depends(get_db)
-                             ) -> dict:
-    
-    # typ = User.__name__
-    # src_url: str = CloudImage.avatar_upload(file=file.file, typ=typ, email=current_user.email)
-    user = await PDFfiles.upload_pdffile(user=current_user, file=file, db=db)
-    return user
-   
+        file: UploadFile = File(),
+        current_user: User = Depends(AuthUser.get_current_user),
+        credentials: HTTPAuthorizationCredentials = Security(security),
+        db: Session = Depends(get_db)
+) -> PdfFileResponse:
+    return await PDFController.upload_pdffile(user=current_user, file=file, db=db)
+
+
+@router.get('/',
+            response_model=PdfFileResponse,
+            dependencies=[Depends(allowed_all_roles_access)],
+            name='Get user pdf-file text.')
+async def get_pdf_text(
+        file_id: int = Query(...),
+        current_user: User = Depends(AuthUser.get_current_user),
+        credentials: HTTPAuthorizationCredentials = Security(security),
+        db: Session = Depends(get_db)
+) -> PdfFileResponse:
+    return await PDFController.get_pdf_text(user=current_user, file_id=file_id, db=db)
+
+
+@router.delete('/',
+               status_code=status.HTTP_204_NO_CONTENT,
+               dependencies=[Depends(allowed_all_roles_access)],
+               name='Delete user pdf-file text.')
+async def del_pdf_text(
+        file_id: int = Query(...),
+        current_user: User = Depends(AuthUser.get_current_user),
+        credentials: HTTPAuthorizationCredentials = Security(security),
+        db: Session = Depends(get_db)
+) -> None:
+    await PDFController.del_pdf_text(user=current_user, file_id=file_id, db=db)
+    return status.HTTP_204_NO_CONTENT
+
+
+@router.get('/get_user_files',
+            response_model=List[PdfFileResponse],
+            dependencies=[Depends(allowed_all_roles_access)],
+            name='Get user pdf-file text.')
+async def get_pdf_text(
+        skip: int = 0,
+        limit: int = 10,
+        current_user: User = Depends(AuthUser.get_current_user),
+        credentials: HTTPAuthorizationCredentials = Security(security),
+        db: Session = Depends(get_db)
+) -> list[PdfFileResponse]:
+    return await PDFController.get_all_user_pdf_text(user=current_user, skip=skip, limit=limit, db=db)

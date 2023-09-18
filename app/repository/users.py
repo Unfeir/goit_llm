@@ -1,14 +1,13 @@
 from datetime import datetime
-from typing import Union, Optional
-
-from sqlalchemy.future import select
-from sqlalchemy.orm import Session, selectinload
+from typing import Optional, Union
 
 from db.models import User
 from repository.basic import BasicCRUD
-from schemas.user import UserUpdate, UserFullUpdate
+from schemas.user import UserFullUpdate, UserUpdate
 from services.auth.password import AuthPassword
 from services.loggs.loger import logger
+from sqlalchemy.future import select
+from sqlalchemy.orm import Session
 
 
 class UserCRUD(BasicCRUD):
@@ -63,4 +62,3 @@ class UserCRUD(BasicCRUD):
         await db.refresh(user)
         logger.warning(f'update user profile {user.email} was banned')
         return user
-    

@@ -1,6 +1,6 @@
-from dotenv import find_dotenv
 from functools import lru_cache
 
+from dotenv import find_dotenv
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 dotenv_path = find_dotenv(filename='.env', raise_error_if_not_found=False, usecwd=True)
@@ -20,7 +20,7 @@ class Settings(BaseSettings):
     cloudinary_api_secret: str = 'secret'
     secret_key: str = 'secretkey'
     algorithm: str = 'algorithm'
-    access_token_timer: int = 60
+    access_token_timer: int = 360
     audience: str = 'auth0 url'
     client_id: str = 'auth0 client_id'
     domain: str = 'auth0 domain'
@@ -31,7 +31,7 @@ class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=dotenv_path, extra='forbid')
 
 
-@lru_cache()
+@lru_cache
 def get_settings() -> Settings:
     return Settings()
 

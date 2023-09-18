@@ -1,17 +1,16 @@
-from typing import Optional, Annotated, Union
+from typing import Annotated, Optional, Union
 
 import jwt
-from fastapi import HTTPException, Depends, status
-from fastapi.security import HTTPBearer
-from sqlalchemy.orm import Session
-
 from conf.config import settings
 from conf.messages import Msg
 from db.db import get_db
 from db.models import User
+from fastapi import Depends, HTTPException, status
+from fastapi.security import HTTPBearer
+from repository.users import UserCRUD as ucrud
 from services.auth.password import AuthPassword
 from services.auth.token import AuthToken
-from repository.users import UserCRUD as ucrud
+from sqlalchemy.orm import Session
 
 security = HTTPBearer()
 

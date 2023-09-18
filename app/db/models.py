@@ -1,20 +1,10 @@
 import enum
 
-from sqlalchemy import Boolean, Column, Enum, func, Integer, String
-from sqlalchemy.sql.sqltypes import DateTime
-from sqlalchemy.sql.schema import ForeignKey
-
 from db.db import Base
-
-
-class PDFfile(Base):
-    __tablename__ = 'pdffiles'
-    id = Column(Integer, primary_key=True)
-    filename = Column(String(50), nullable=False, unique=False)
-    context = Column(String, nullable=True)
-    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'), nullable=True)
-    created_at = Column(DateTime, default=func.now())
-    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+from sqlalchemy import Boolean, Column, Enum, Integer, String, func
+from sqlalchemy.orm import relationship
+from sqlalchemy.sql.schema import ForeignKey
+from sqlalchemy.sql.sqltypes import DateTime
 
 
 class UserRole(enum.Enum):
@@ -35,6 +25,8 @@ class User(Base):
     role = Column('role', Enum(UserRole), default=UserRole.USER)
     confirmed = Column(Boolean, default=True)
     status_active = Column(Boolean, default=True)
+
+    pdf_files = relationship('PDFfile', backref='user')
 
     __mapper_args__ = {"eager_defaults": True}
 
@@ -59,3 +51,28 @@ class User(Base):
             'confirmed': 'confirmed',
             'status_active': 'status_active',
         }
+
+
+class PDFfile(Base):
+    __tablename__ = 'pdffiles'
+    id = Column(Integer, primary_key=True)
+    filename = Column(String(50), nullable=False, unique=False)
+    context = Column(String, nullable=True)
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
+    created_at = Column(DateTime, default=func.now())
+    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+
+    history = relationship('History', backref='file')
+
+
+
+class History(Base):
+    __tablename__ = 'history'
+    id = Column(Integer, primary_key=True)
+    fil_id = Column(Integer, ForeignKey('pdffiles.id', ondelete='CASCADE'))
+    question = Column(String)
+    answer = Column(String)
+    created_at = Column(DateTime, default=func.now())
+
+
+
