@@ -2,8 +2,6 @@ import hashlib
 from typing import BinaryIO
 
 import cloudinary
-from cloudinary.uploader import upload
-
 from conf.config import settings
 
 

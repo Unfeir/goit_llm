@@ -1,18 +1,17 @@
 from typing import List, Optional
 
-from fastapi import APIRouter, Depends, File, HTTPException, Security, status, UploadFile
-from fastapi.security import HTTPAuthorizationCredentials
-from sqlalchemy.orm import Session
-
 from conf.messages import Msg
 from db.db import get_db
 from db.models import User, UserRole
+from fastapi import APIRouter, Depends, File, HTTPException, Security, UploadFile, status
+from fastapi.security import HTTPAuthorizationCredentials
 from repository.users import UserCRUD
-from schemas.user import UserResponse, UserUpdate, UserFullUpdate
+from schemas.user import UserFullUpdate, UserResponse, UserUpdate
 from services.auth.user import AuthUser, security
 from services.images import CloudImage
 from services.loggs.loger import logger
-from services.roles import allowed_all_roles_access, allowed_admin
+from services.roles import allowed_admin, allowed_all_roles_access
+from sqlalchemy.orm import Session
 
 router = APIRouter(prefix='/users', tags=['users'])
 

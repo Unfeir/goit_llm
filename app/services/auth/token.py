@@ -1,16 +1,16 @@
 from datetime import datetime, timedelta
-from typing import Optional, Annotated
+from typing import Annotated, Optional
 
 import jwt
-from fastapi import HTTPException, Depends
-from fastapi.security import OAuth2PasswordBearer
-from jose import jwt as jwt_2, JWTError
-from starlette import status
-
 from conf.config import settings
 from conf.messages import Msg
 from db.models import User
+from fastapi import Depends, HTTPException
+from fastapi.security import OAuth2PasswordBearer
+from jose import JWTError
+from jose import jwt as jwt_2
 from services.loggs.loger import logger
+from starlette import status
 
 
 class AuthToken:

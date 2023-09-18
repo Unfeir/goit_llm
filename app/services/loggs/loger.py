@@ -1,7 +1,6 @@
 import logging
-from os.path import dirname as d
 from os.path import abspath, join
-
+from os.path import dirname as d
 
 filepath = join(d(d(abspath(__file__))), "loggs/app.log")
 

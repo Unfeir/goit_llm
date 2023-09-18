@@ -164,5 +164,4 @@ cython_debug/
 
 /migrations/
 tests/.conftest.py.icloud
-*.py
 app/services/celerybeat-schedule.db

@@ -1,23 +1,20 @@
-from typing import TypeVar, Generic, List, Optional, Union
+from typing import Generic, List, Optional, TypeVar, Union
 
+from db.models import User, UserRole
+from schemas.pdffile import PdfFileBase
+from schemas.user import UserSignUp
+from services.loggs.loger import logger
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
 from sqlalchemy.sql import func
-
-from db.models import User, UserRole
-from schemas.pdffile import PdfFileRequest
-from schemas.user import UserSignUp
-from services.loggs.loger import logger
 
 UM = TypeVar('UM')
 
 
 class BasicCRUD(Generic[UM]):
     @classmethod
-    async def create_item(cls, model: UM, body: Union[UserSignUp, PdfFileRequest], db: Session) -> UM:
+    async def create_item(cls, model: UM, body: Union[UserSignUp, PdfFileBase], db: Session) -> UM:
         new_item = model(**body.model_dump())
-        print(f'{body=}')
-        print(f'{new_item=}')
         # check if there is data in the table, first user = admin
         if model == User:
             query = select(func.count()).select_from(User)
