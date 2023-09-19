@@ -13,8 +13,8 @@ import uvicorn
 
 from conf.config import get_settings
 from db.db import get_db
+from routes import auth, users, pdffile, chat
 from services.loggs.loger import logger
-from routes import auth, users, pdffile
 import templates
 
 app = FastAPI()
@@ -22,8 +22,9 @@ app = FastAPI()
 app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(pdffile.router)
-app.mount(f'/templates', StaticFiles(directory=f'templates'), name='templates')
-# app.mount(f'/app/templates', StaticFiles(directory=f'{cwd}/app/templates'), name='templates')
+app.include_router(chat.router)
+# app.mount(f'/templates', StaticFiles(directory=f'templates'), name='templates')
+app.mount(f'/app/templates', StaticFiles(directory=f'{cwd}/app/templates'), name='templates')
 
 origins = [
     "http://localhost",
@@ -38,8 +39,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
 
 
 @app.get("/")
@@ -70,7 +69,6 @@ async def db_checker(db: Session = Depends(get_db)):
 
 # ----- alternative simplest CHAT --ok------------------------
 
-
 class ConnectionManager:
     def __init__(self):
         self.connections: List[WebSocket] = []
@@ -97,7 +95,6 @@ async def websocket_endpoint(websocket: WebSocket, client_id: int):
         data = await websocket.receive_text()
         await manager.broadcast(f"Client {client_id}: {data}")
         
-
 
 if __name__ == '__main__':
     credentials = get_settings()

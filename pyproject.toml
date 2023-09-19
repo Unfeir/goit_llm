@@ -27,6 +27,7 @@ companies = "^1.0.0"
 psycopg2-binary = "^2.9.7"
 pypdf2 = "^3.0.1"
 ruff = "^0.0.290"
+transformers = "^4.33.2"
 
 [tool.ruff]
 extend-exclude = ["tests*"]
