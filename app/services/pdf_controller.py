@@ -1,14 +1,15 @@
 from io import BytesIO
 from typing import List
 
-from conf.messages import Msg
-from db.models import PDFfile, User
 from fastapi import HTTPException, UploadFile, status
 from PyPDF2 import PdfReader
+from sqlalchemy.orm import Session
+
+from conf.messages import Msg
+from db.models import PDFfile, User
 from repository.basic import BasicCRUD
 from repository.pdffile import PDFCRUD
 from schemas.pdffile import PdfFileBase, PdfFileResponse
-from sqlalchemy.orm import Session
 
 
 class PDFController:
@@ -17,10 +18,10 @@ class PDFController:
     async def upload_pdffile(user: User, file: UploadFile, db: Session) -> PdfFileResponse:
         pdf_data = await PDFController.get_txt_from_pdf(file)
         pdffile = PdfFileBase(
-            user_id=user.id,
-            filename=pdf_data.get('filename'),
-            context=pdf_data.get('text'),
-        )
+                              user_id=user.id,
+                              filename=pdf_data.get('filename'),
+                              context=pdf_data.get('text'),
+                              )
         return await BasicCRUD.create_item(PDFfile, pdffile, db)
 
     @staticmethod

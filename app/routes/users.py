@@ -16,11 +16,14 @@ from sqlalchemy.orm import Session
 router = APIRouter(prefix='/users', tags=['users'])
 
 
-@router.get('/',
+@router.get(
+            '/',
             dependencies=[Depends(allowed_all_roles_access)],
             response_model=List[UserResponse],
-            name='Get all users')
-async def get_all_users(skip: int = 0, limit: int = 10,
+            name='Get all users'
+            )
+async def get_all_users(
+                        skip: int = 0, limit: int = 10,
                         current_user: User = Depends(AuthUser.get_current_user),
                         credentials: HTTPAuthorizationCredentials = Security(security),
                         db: Session = Depends(get_db)
@@ -33,16 +36,18 @@ async def get_all_users(skip: int = 0, limit: int = 10,
     return users
 
 
-@router.get('/{user_id}',
+@router.get(
+            '/{user_id}',
             dependencies=[Depends(allowed_all_roles_access)],
             response_model=UserResponse,
-            name='Get user info by id')
+            name='Get user info by id'
+            )
 async def get_user_by_id(
-        user_id: int,
-        current_user: User = Depends(AuthUser.get_current_user),
-        credentials: HTTPAuthorizationCredentials = Security(security),
-        db: Session = Depends(get_db)
-) -> Optional[User]:
+                         user_id: int,
+                         current_user: User = Depends(AuthUser.get_current_user),
+                         credentials: HTTPAuthorizationCredentials = Security(security),
+                         db: Session = Depends(get_db)
+                         ) -> Optional[User]:
     user: Optional[User] = await UserCRUD.get_by_id(id_=user_id, model=User, db=db)
 
     if not user:
@@ -53,32 +58,34 @@ async def get_user_by_id(
 
 
 
-@router.patch('/',
+@router.patch(
+              '/',
               dependencies=[Depends(allowed_all_roles_access)],
               response_model=UserResponse,
               name='Update own username, password'
               )
 async def update_user_profile(
-        body: UserUpdate,
-        current_user: User = Depends(AuthUser.get_current_user),
-        credentials: HTTPAuthorizationCredentials = Security(security),
-        db: Session = Depends(get_db)
-) -> User:
+                              body: UserUpdate,
+                              current_user: User = Depends(AuthUser.get_current_user),
+                              credentials: HTTPAuthorizationCredentials = Security(security),
+                              db: Session = Depends(get_db)
+                              ) -> User:
     updated_user = await UserCRUD.update_user_profile(user=current_user, body=body, db=db)
     return updated_user
 
 
-@router.patch('/admin/{user_id}',
+@router.patch(
+              '/admin/{user_id}',
               dependencies=[Depends(allowed_admin)],
               response_model=UserResponse,
               name='Update userprofile'
               )
 async def update_user_profile_by_admin(
-        user_id: int,
-        body: UserFullUpdate,
-        credentials: HTTPAuthorizationCredentials = Security(security),
-        db: Session = Depends(get_db)
-) -> User:
+                                       user_id: int,
+                                       body: UserFullUpdate,
+                                       credentials: HTTPAuthorizationCredentials = Security(security),
+                                       db: Session = Depends(get_db)
+                                       ) -> User:
     user: Optional[User] = await UserCRUD.get_by_id(id_=user_id, model=User, db=db)
     if not user:
         logger.debug(f'No user with {user_id=}')
@@ -87,29 +94,33 @@ async def update_user_profile_by_admin(
     return updated_user
 
 
-@router.delete('/',
+@router.delete(
+               '/',
                dependencies=[Depends(allowed_all_roles_access)],
                name='Delete user',
-               status_code=status.HTTP_204_NO_CONTENT)
+               status_code=status.HTTP_204_NO_CONTENT
+               )
 async def delete_user(
-        current_user: User = Depends(AuthUser.get_current_user),
-        credentials: HTTPAuthorizationCredentials = Security(security),
-        db: Session = Depends(get_db)
-) -> None:
+                      current_user: User = Depends(AuthUser.get_current_user),
+                      credentials: HTTPAuthorizationCredentials = Security(security),
+                      db: Session = Depends(get_db)
+                      ) -> None:
     await UserCRUD.delete_by_id(id_=current_user.id, model=User, db=db)
     return status.HTTP_204_NO_CONTENT
 
 
-@router.patch('/ban/{user_id}',
+@router.patch(
+              '/ban/{user_id}',
               dependencies=[Depends(allowed_admin)],
               name='Ban user',
-              response_model=UserResponse)
+              response_model=UserResponse
+              )
 async def ban_user(
-        user_id: int,
-        active_status: bool,
-        credentials: HTTPAuthorizationCredentials = Security(security),
-        db: Session = Depends(get_db)
-) -> User:
+                   user_id: int,
+                   active_status: bool,
+                   credentials: HTTPAuthorizationCredentials = Security(security),
+                   db: Session = Depends(get_db)
+                   ) -> User:
     user = await UserCRUD.get_by_id(id_=user_id, model=User, db=db)
     if not user:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=Msg.m_404_user_not_found.value)
@@ -119,11 +130,13 @@ async def ban_user(
     return user
 
 
-# !!???????????????????????
-@router.patch('/avatar',
+# !!??
+@router.patch(
+              '/avatar',
               response_model=UserResponse,
               dependencies=[Depends(allowed_all_roles_access)],
-              name='Update user avatar')
+              name='Update user avatar'
+              )
 async def update_avatar_user(
                              file: UploadFile = File(),
                              current_user: User = Depends(AuthUser.get_current_user),
@@ -131,19 +144,21 @@ async def update_avatar_user(
                              db: Session = Depends(get_db)
                              ) -> User:
     typ = User.__name__
-    src_url: str = CloudImage.avatar_upload(file=file.file, typ=typ, email=current_user.email)  # !!???????????????????????
-    user: User = await UserCRUD.update_avatar(model=current_user, url=src_url, db=db)  # !!???????????????????????
+    src_url: str = CloudImage.avatar_upload(file=file.file, typ=typ, email=current_user.email)  # !!??
+    user: User = await UserCRUD.update_avatar(model=current_user, url=src_url, db=db)  # !!??
     return user
 
 
-@router.patch('/avatar_delete',
+@router.patch(
+              '/avatar_delete',
               response_model=UserResponse,
               dependencies=[Depends(allowed_all_roles_access)],
-              name='Delete user avatar')
+              name='Delete user avatar'
+              )
 async def delete_user_avatar(
-        current_user: User = Depends(AuthUser.get_current_user),
-        credentials: HTTPAuthorizationCredentials = Security(security),
-        db: Session = Depends(get_db)
-) -> User:
+                             current_user: User = Depends(AuthUser.get_current_user),
+                             credentials: HTTPAuthorizationCredentials = Security(security),
+                             db: Session = Depends(get_db)
+                             ) -> User:
     user: User = await UserCRUD.update_avatar(model=current_user, url=None, db=db)
     return user

@@ -22,10 +22,10 @@ class UserCRUD(BasicCRUD):
             dummy_password = AuthPassword.get_hash_password(password=f'{email}{datetime.utcnow().timestamp()}')
             password = payload.get('password', dummy_password)
             user = User(
-                email=email,
-                username=username,
-                password=password
-            )
+                        email=email,
+                        username=username,
+                        password=password
+                        )
             db.add(user)
             await db.commit()
             await db.refresh(user)

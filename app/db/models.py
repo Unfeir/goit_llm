@@ -1,16 +1,16 @@
 import enum
 
-from db.db import Base
-from sqlalchemy import Boolean, Column, Enum, Integer, String, func
+from sqlalchemy import Column, Boolean, Enum, func, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.sql.sqltypes import DateTime
+
+from db.db import Base
 
 
 class UserRole(enum.Enum):
     ADMIN: str = 'admin'
     USER: str = 'user'
-
 
 
 class User(Base):
@@ -32,25 +32,25 @@ class User(Base):
 
     def to_dict(self) -> dict:
         return {
-            'id': self.id,
-            'username': self.username,
-            'email': self.email,
-            'password': self.password,
-            'role': self.role.value,
-            'status_active': self.status_active
-        }
+                'id': self.id,
+                'username': self.username,
+                'email': self.email,
+                'password': self.password,
+                'role': self.role.value,
+                'status_active': self.status_active
+                }
 
     @property
     def mapper(self) -> dict:
         return {
-            'username': 'username',
-            'email': 'email',
-            'password': 'password',
-            'avatar': 'avatar',
-            'role': 'role',
-            'confirmed': 'confirmed',
-            'status_active': 'status_active',
-        }
+                'username': 'username',
+                'email': 'email',
+                'password': 'password',
+                'avatar': 'avatar',
+                'role': 'role',
+                'confirmed': 'confirmed',
+                'status_active': 'status_active',
+                }
 
 
 class PDFfile(Base):
@@ -65,14 +65,19 @@ class PDFfile(Base):
     history = relationship('History', backref='file')
 
 
-
 class History(Base):
     __tablename__ = 'history'
     id = Column(Integer, primary_key=True)
     fil_id = Column(Integer, ForeignKey('pdffiles.id', ondelete='CASCADE'))
-    question = Column(String)
-    answer = Column(String)
+    question = Column(String)  # ? question id?
+    answer = Column(String)  # # ? answer id?
     created_at = Column(DateTime, default=func.now())
 
 
-
+class Question(Base):
+    __tablename__ = 'questions'
+    id = Column(Integer, primary_key=True)
+    fil_id = Column(Integer, ForeignKey('pdffiles.id', ondelete='CASCADE'))
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))  # !
+    question = Column(String)
+    created_at = Column(DateTime, default=func.now())
