@@ -1,13 +1,11 @@
 # from PyPDF2 import PdfReader
 from conf.messages import Msg
-from db.models import Question, PDFfile, User
+from db.models import PDFfile, Question, User
 from fastapi import HTTPException, status
 from repository.basic import BasicCRUD
+from schemas.chat import ChatRequest, ChatResponse
 from sqlalchemy.orm import Session
 from transformers import pipeline
-
-from schemas.chat import ChatResponse, ChatRequest
-
 
 # # moved to PDFController in pdf_controller ?:
 # # https://pypdf2.readthedocs.io/en/3.0.0/search.html?q=async&check_keywords=yes&area=default
@@ -20,7 +18,7 @@ from schemas.chat import ChatResponse, ChatRequest
 #         text += reader.pages[page].extract_text()
 
 #     return text
-    
+
 
 qa_model = pipeline('question-answering', model='distilbert-base-cased-distilled-squad')
 
@@ -29,8 +27,8 @@ class RequestAnalyzer:
 
     @staticmethod
     async def get_the_answer(
-                             qa_model: pipeline = qa_model, 
-                             question: str = 'Is there a question?', 
+                             qa_model: pipeline = qa_model,
+                             question: str = 'Is there a question?',
                              context: str = 'I don\'t see the request.'
                              ) -> dict:
         """Returns an answer by model."""

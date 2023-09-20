@@ -27,7 +27,6 @@ class PDFController:
     @staticmethod
     async def get_pdf_text(user: User, file_id: int, db: Session) -> PdfFileResponse:
         pdf_text = await BasicCRUD.get_by_id(id_=file_id, model=PDFfile, db=db)
-        print(f'{pdf_text=}')
         if not pdf_text:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=Msg.m_404_file_not_found.value)
         if user.id != pdf_text.user_id:

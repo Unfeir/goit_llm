@@ -3,11 +3,14 @@ from datetime import datetime
 from pydantic import BaseModel
 
 
-class History(BaseModel):
-    id: int
+class HistoryBase(BaseModel):
     fil_id: int
     question: str
     answer: str
+
+
+class HistoryResponse(HistoryBase):
+    id: int
     created_at: datetime
 
     class ConfigDict:

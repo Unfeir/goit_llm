@@ -12,3 +12,4 @@ class Msg(Enum):
     m_400_inactive_user = 'Inactive user.'
     m_403_not_pdf = 'only PDF file can be downloaded.'
     m_403_foreign_file = 'You can look only own PDF fille.'
+
