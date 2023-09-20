@@ -17,6 +17,7 @@
             var clientID = Date.now();
             var ws = new WebSocket(`ws://localhost:8000/chat/ws/${clientID}`);
 
+
             function processMessage(event) {
                 var messages = document.getElementById('messages')
                 var message = document.createElement('li')
