@@ -23,22 +23,22 @@ app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(pdffile.router)
 app.include_router(chat.router)
-# app.mount(f'/templates', StaticFiles(directory=f'templates'), name='templates')
-app.mount(f'/app/templates', StaticFiles(directory=f'{cwd}/app/templates'), name='templates')
+app.mount(f'/templates', StaticFiles(directory=f'templates'), name='templates')
+# app.mount(f'/app/templates', StaticFiles(directory=f'{cwd}/app/templates'), name='templates')
 
 origins = [
-    "http://localhost",
-    "http://localhost:8000",
-    "http://localhost:8080",
-]
+           "http://localhost",
+           "http://localhost:8000",
+           "http://localhost:8080",
+           ]
 
 app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+                   CORSMiddleware,
+                   allow_origins=origins,
+                   allow_credentials=True,
+                   allow_methods=["*"],
+                   allow_headers=["*"],
+                   )
 
 
 @app.get("/")
@@ -46,10 +46,10 @@ async def healthchecker() -> dict:
     logger.warning('App started')
     logger.debug('Everything is Ok')
     return {
-        "status_code": 200,
-        "detail": "ok",
-        "result": "working",
-    }
+            "status_code": 200,
+            "detail": "ok",
+            "result": "working",
+            }
 
 
 @app.get('/db_checker')
