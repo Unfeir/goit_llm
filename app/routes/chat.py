@@ -1,13 +1,14 @@
-from typing import List
 
 from db.db import get_db
 from db.models import User
-from fastapi import APIRouter, Depends, File, Query, Security, UploadFile, status
+from fastapi import APIRouter, Depends, Query, Security, WebSocket
 from fastapi.security import HTTPAuthorizationCredentials
 from schemas.chat import ChatRequest, ChatResponse
 from services.auth.user import AuthUser, security
-from services.textprocessor import RequestAnalyzer
+from services.chat.chat_controller import manager, model
+from services.loggs.loger import logger
 from services.roles import allowed_all_roles_access
+from services.textprocessor import RequestAnalyzer
 from sqlalchemy.orm import Session
 
 router = APIRouter(prefix='/chat', tags=['chat'])
@@ -43,3 +44,16 @@ async def get_answer(
                      db: Session = Depends(get_db)
                      ) -> ChatResponse:
     return await RequestAnalyzer.return_answer(user=current_user, file_id=file_id, question_id=question_id, db=db)
+
+
+@router.websocket("/ws/{client_id}")
+async def websocket_endpoint(websocket: WebSocket, client_id: int):
+    logger.debug(f'{client_id=}')
+    await manager.connect(websocket)
+    while True:
+        data = await websocket.receive_text()
+        logger.debug(f'{data=}')
+        response = await model.get_answer(data)
+        # await manager.broadcast(f"Client {client_id}: {data}")
+        await websocket.send_text(f'response = {response}')
+

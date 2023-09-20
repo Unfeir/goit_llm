@@ -1,6 +1,7 @@
 from typing import Generic, List, Optional, TypeVar, Union
 
 from db.models import User, UserRole
+from schemas.history import HistoryBase
 from schemas.pdffile import PdfFileBase
 from schemas.user import UserSignUp
 from services.loggs.loger import logger
@@ -13,7 +14,7 @@ UM = TypeVar('UM')
 
 class BasicCRUD(Generic[UM]):
     @classmethod
-    async def create_item(cls, model: UM, body: Union[UserSignUp, PdfFileBase], db: Session) -> UM:
+    async def create_item(cls, model: UM, body: Union[UserSignUp, PdfFileBase, HistoryBase], db: Session) -> UM:
         new_item = model(**body.model_dump())
         # check if there is data in the table, first user = admin
         if model == User:
