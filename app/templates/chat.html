@@ -14,8 +14,20 @@
         <ul id='messages'>
         </ul>
         <script>
+        const authResponse = JSON.parse(localStorage.getItem("authResponse"));
+
+        if (authResponse) {
+            // Використання відповіді за потреби
+            console.log(authResponse);
+            var accessToken = authResponse.access_token
+<!--            // Очищення відповіді з localStorage після використання (якщо потрібно)-->
+<!--            localStorage.removeItem("authResponse");-->
+        }
+
+
             var clientID = Date.now();
-            var ws = new WebSocket(`ws://localhost:8000/chat/ws/${clientID}`);
+<!--            var accessToken = {{ variable }}-->
+            var ws = new WebSocket(`ws://localhost:8000/chat/ws/${clientID}`, ['access_token', accessToken]);
 
             function processMessage(event) {
                 var messages = document.getElementById('messages')
@@ -33,19 +45,26 @@
                 var content = document.createTextNode(input.value)
                 message.appendChild(content);
                 messages.appendChild(message);
-                ws.send(input.value);
+
+                // Додайте accessToken до повідомлення
+                var messageWithToken = {
+                    text: input.value,
+                    accessToken: accessToken
+                };
+
+                ws.send(JSON.stringify(messageWithToken));
 
                 input.value = ''
                 event.preventDefault()
             }
-            
+
             function showForm(event) {
                 var button = document.getElementById("connect");
                 var form = document.getElementById("form");
                 button.style.display = "none";
                 form.style.display = "block";
             }
-
         </script>
+
     </body>
 </html>
