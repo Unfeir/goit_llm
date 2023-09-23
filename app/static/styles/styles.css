@@ -1,0 +1,204 @@
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #FAFAFA;
+  color: #040404;
+}
+
+.accent {
+  color: #9C6FE2;
+}
+
+.dotted-background {
+  /* width: 100%; */
+  /* height: 300px; */
+  background-color: #040404; /* Background color */
+  background-image: radial-gradient(circle, #9CA3AF 2px, transparent 1px); /* Dotted pattern */
+  background-size: 10px 10px; /* Adjust the size and spacing of dots */
+}
+
+.lined-background {
+  /* width: 100%; */
+  /* height: 300px; */
+  background-color: #040404;
+  background-image: radial-gradient(circle, #9CA3AF 1px, transparent 1px); /* Dotted pattern */
+  background-size: 1px 10px;
+}
+
+
+
+#file-upload-input {
+  display: none;
+}
+
+.custom-button {
+  background-color: #9C6FE2;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.custom-button:hover {
+  background-color: #a053be
+}
+
+.custom-button-centered {
+  position: absolute;
+  top: -20px;
+}
+
+.up-block {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 50vh;
+}
+
+.down-block {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 50vh;
+  padding-top: 20px;
+  background-color: #040404;
+  background-image: radial-gradient(circle, #6B7280 1px, transparent 1px); /* Dotted pattern */
+  background-size: 1px 10px; /* Adjust the size and spacing of dots */
+}
+
+.upload-title {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.upload-form {
+  margin-top: 30px;
+}
+
+.main-title {
+  color: #EFEDE8;
+  font-size: 44px;
+  text-align: center;
+}
+
+.triangle-block {
+  width: 0;
+  height: 0;
+  border-radius: 10%;
+  border-left: 50vw solid red; /* Left border is 50% of viewport width (responsive) */
+  border-right: 0vw solid transparent; /* Right border is 50% of viewport width (responsive) */
+  border-bottom: 100px solid red;
+  border-top: 50vw solid transparent;
+}
+
+.triangle-button {
+  max-width: 1px;
+  background-color: #3498db; /* Button background color (adjust as needed) */
+  color: white; /* Text color */
+  border: none; /* Remove default button border */
+  padding: 10px 20px; /* Adjust padding as needed */
+  cursor: pointer; /* Change cursor to pointer on hover */
+  position: relative; /* Relative positioning for the pseudo-element */
+}
+
+/* Create a triangle shape using borders */
+.triangle-button::before {
+  content: "";
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent; /* Left border is transparent */
+  border-right: 10px solid transparent; /* Right border is transparent */
+  border-bottom: 20px solid #3498db; /* Bottom border matches button background color */
+  position: absolute;
+  top: -20px; /* Adjust the distance of the triangle above the button */
+  left: 50%; /* Position the triangle in the center */
+  transform: translateX(-50%); /* Center horizontally */
+}
+
+.triangle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  border-left: 50px solid red;
+  border-right: 0px solid red;
+  border-bottom: 10px solid red; /* Колір трикутника (замініть на потрібний) */
+  border-top: 5px solid red;
+}
+
+
+.rounded-triangle-block {
+  width: 200px; /* Adjust the width as needed */
+  height: 200px; /* Adjust the height as needed */
+  background-color: #3498db; /* Block background color (adjust as needed) */
+  position: relative; /* Relative positioning for pseudo-elements */
+  overflow: hidden; /* Hide overflow to round corners */
+}
+
+/* Create a rounded triangle shape using ::before */
+.rounded-triangle-block::before {
+  content: "";
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 50px 100px 50px; /* Adjust the dimensions of the triangle */
+  border-color: transparent transparent #3498db transparent; /* Triangle color */
+  top: -30px; /* Adjust the position of the triangle */
+  left: 50%;
+  transform: translateX(-50%); /* Center horizontally */
+  border-radius: 0 0 20px 20px; /* Round the bottom corners */
+}
+
+.login-block {
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.login-title {
+  font-size: 44px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.login-label {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.login-input {
+  width: 100%;
+  height: 40px;
+  margin-top: 10px;
+  padding: 0 10px;
+  border-radius: 5px;
+  border: 1px solid #9CA3AF;
+  outline: none;
+}
+
+.login-button {
+  width: 30px;
+  height: 40px;
+  margin-top: 10px;
+  padding: 0 10px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  background-color: #9C6FE2;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}

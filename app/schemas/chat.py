@@ -7,7 +7,7 @@ class ChatRequest(BaseModel):
     user_id: int
     pdffile_id: int
     question: str
-    created_at: datetime
+    # created_at: datetime
 
 class ChatResponse(BaseModel):
     # answer_id: int  # auto to db! save chat

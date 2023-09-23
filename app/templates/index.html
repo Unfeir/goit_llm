@@ -1,22 +1,15 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <title>PDF-Responser</title>
-    <link rel="icon" href="data:;base64,=">
-</head>
+{% block content %}
+<div class="up-block dotted-background">
+    <h1 class="main-title">Welcome to <span class="accent">Chat PDF</span></h1>
+</div>
+<div class="down-block lined-background">
+    <a
+        class="custom-button custom-button-centered"
+        href="/pages/login/"
+    >Start chat</a>
+</div>
 
-<body>
-<center>
-    <H3>Welcome PDF-Responser</H3>
-    Upload PDF-file:
-    <br>
-<form action="/uploadfile/" enctype="multipart/form-data" method="post">
-    <input type="file" name="file">
-    <input type="submit" value="Submit">
-</form>
-</center>
-</body>
-
-</html>
+<hr>
+{% endblock %}

@@ -7,15 +7,15 @@
     <br>
     Upload PDF-file:
     <br>
-    <form action="/pdffiles/" enctype="multipart/form-data" method="post">
-        <input type="file" name="file">
-        <input type="submit" value="Upload file" id="submitBtn2">
+    <form id="uploadForm" enctype="multipart/form-data">
+        <input type="file" id="fileInput" name="file">
+        <button type="button" id="submitButton1">Upload File</button>
     </form>
     <br>
     // select pdf from db by id:
     <h1>PDF ID:</h1>
     <input type="number" id="numberInput">
-    <button id="submitButton">Submit</button>
+    <button id="submitButton2">Submit</button>
 
 
     {% if filename %}
@@ -57,38 +57,32 @@
 <!--      .catch(error => {-->
 <!--        console.error('Error:', error);-->
 <!--      });-->
-  document.getElementById("submitBtn2").addEventListener("click", function(event) {
-      event.preventDefault();
-      const username = document.getElementById("username").value;
-      const password = document.getElementById("password").value;
-      const formData = new URLSearchParams();
-      formData.append("grant_type", "password");
-      formData.append("username", username);
-      formData.append("password", password);
-      formData.append("scope", "default");
-      formData.append("client_id", "your-client-id");
-      formData.append("client_secret", "your-client-secret");
+  document.getElementById("submitButton1").addEventListener("click", function(event) {
+            const fileInput = document.getElementById("fileInput");
+            const formData = new FormData();
 
-      fetch("/auth/login", {
-          method: "POST",
-          headers: {
-              "Content-Type": "application/x-www-form-urlencoded"
-          },
-          body: formData.toString()
-      })
-      .then(response => {
-                    if (response.ok) {
-                      // If the request was successful (status code 200), you can redirect to another page
-                      window.location.href = 'http://127.0.0.1:8000/pages/chat';
-                    } else {
-                      // Handle errors here if needed
-                      console.error('POST request failed');
-                    }
-                  })
-      .catch(error => console.error("Помилка: " + error));
-  });
+            // Append the selected file to the FormData object
+            formData.append("file", fileInput.files[0]);
 
-  document.getElementById("submitButton").addEventListener("click", function() {
+            // Send the POST request to your FastAPI backend
+            fetch("/pdffiles", {
+                method: "POST",
+                body: formData,
+            })
+            .then(response => response.json())
+            .then(result => {
+                // Display the response from the FastAPI backend
+                // document.getElementById("responseMessage").textContent = `File Uploaded: ${result.filename}`;
+
+                // Redirect to the same page
+                window.location.href = window.location.href;
+            })
+            .catch(error => {
+                console.error("Error:", error);
+            });
+        });
+
+  document.getElementById("submitButton2").addEventListener("click", function() {
       const numberInput = document.getElementById("numberInput").value;
 
             // Create a JSON object with the number

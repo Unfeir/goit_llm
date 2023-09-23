@@ -15,6 +15,21 @@ router = APIRouter(prefix='/pdffiles', tags=['pdffiles'])
 
 
 @router.post(
+             '/{pdf_id}',
+             response_model=PdfFileResponse,
+             dependencies=[Depends(allowed_all_roles_access)],
+             name='Select pdf-file.'
+             )
+async def select_pdf_by_id(
+                             pdf_id: int,
+                             current_user: User = Depends(AuthUser.get_current_user),
+                             credentials: HTTPAuthorizationCredentials = Security(security),
+                             db: Session = Depends(get_db)
+                             ) -> PdfFileResponse:
+    return await PDFController.get_pdf_text(user=current_user, file_id=pdf_id, db=db)
+
+
+@router.post(
              '/',
              response_model=PdfFileResponse,
              dependencies=[Depends(allowed_all_roles_access)],

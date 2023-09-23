@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Chat</title>
+        <link rel="icon" href="data:;base64,=">
+    </head>
+    <body>
+        <h1>WebSocket Chat</h1>
+        <button onClick="showForm(event)" id="connect">Connect</button>
+        <form action="" onsubmit="sendMessage(event)" id="form" style="display: none">
+            <input type="text" id="messageText" autocomplete="off"/>
+            <button>Send</button>
+        </form>
+        <ul id='messages'>
+        </ul>
+        <script>
+        const authResponse = JSON.parse(localStorage.getItem("authResponse"));
+
+        if (authResponse) {
+            // Використання відповіді за потреби
+            console.log(authResponse);
+            var accessToken = authResponse.access_token
+<!--            // Очищення відповіді з localStorage після використання (якщо потрібно)-->
+<!--            localStorage.removeItem("authResponse");-->
+        }
+
+
+            var clientID = Date.now();
+<!--            var accessToken = {{ variable }}-->
+            var ws = new WebSocket(`ws://localhost:8000/chat/ws/${clientID}`, ['access_token', accessToken]);
+
+            function processMessage(event) {
+                var messages = document.getElementById('messages')
+                var message = document.createElement('li')
+                var content = document.createTextNode(event.data)
+                message.appendChild(content);
+                messages.appendChild(message);
+            }
+
+            ws.onmessage = processMessage;
+
+            function sendMessage(event) {
+                var input = document.getElementById("messageText")
+                var message = document.createElement('li')
+                var content = document.createTextNode(input.value)
+                message.appendChild(content);
+                messages.appendChild(message);
+
+                // Додайте accessToken до повідомлення
+                var messageWithToken = {
+                    text: input.value,
+                    accessToken: accessToken
+                };
+
+                ws.send(JSON.stringify(messageWithToken));
+
+                input.value = ''
+                event.preventDefault()
+            }
+
+            function showForm(event) {
+                var button = document.getElementById("connect");
+                var form = document.getElementById("form");
+                button.style.display = "none";
+                form.style.display = "block";
+            }
+        </script>
+
+    </body>
+</html>
