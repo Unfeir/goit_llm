@@ -4,21 +4,26 @@
 # sys.path.append(f'{cwd}/app')
 
 import uvicorn
+from fastapi.templating import Jinja2Templates
+
 from conf.config import get_settings
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from routes import auth, chat, history, pdffile, users
+from routes import auth, chat, history, pdffile, users, pages
 from services.loggs.loger import logger
 
 app = FastAPI()
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
 
 app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(pdffile.router)
 app.include_router(chat.router)
 app.include_router(history.router)
-app.mount('/templates', StaticFiles(directory='templates'), name='templates')
+app.include_router(pages.router)
+# app.mount('/templates', StaticFiles(directory='templates'), name='templates')
 # app.mount('/services/chat/templates', StaticFiles(directory='services/chat/templates'), name='templates')
 # app.mount(f'/app/templates', StaticFiles(directory=f'/app/templates'), name='templates')
 
@@ -35,8 +40,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
 
 
 @app.get("/")

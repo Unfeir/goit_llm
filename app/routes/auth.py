@@ -22,6 +22,7 @@ async def sign_up(
         body: UserSignUp,
         db: Session = Depends(get_db)
 ) -> User:
+    logger.debug(f'{body}')
     check_user: Optional[User] = await UserCRUD.get_user_by_email(email=body.email, db=db)
     if check_user:
         logger.error(f'try to signup with exist email: {Msg.m_409_conflict.value}')

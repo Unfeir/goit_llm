@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="login-block">
+  <h1 class="login-title">Login</h1>
+  <form id="loginForm">
+      <label class="login-label" for="username">Username:</label>
+      <input class="login-input" type="text" id="username" name="username" required><br><br>
+      <label class="login-label" for="password">Password:</label>
+      <input class="login-input" type="password" id="password" name="password" required><br><br>
+      <button class="custom-button" id="submitBtn" onclick="submitForm">Login</button>
+  </form>
+  <a class="custom-button" href="/pages/signup">Sign up</a>
+</div>
+
+<script>
+  document.getElementById("submitBtn").addEventListener("click", function(event) {
+      event.preventDefault();
+      const username = document.getElementById("username").value;
+      const password = document.getElementById("password").value;
+      const formData = new URLSearchParams();
+      formData.append("grant_type", "password");
+      formData.append("username", username);
+      formData.append("password", password);
+      formData.append("scope", "default");
+      formData.append("client_id", "your-client-id");
+      formData.append("client_secret", "your-client-secret");
+
+      fetch("/auth/login", {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/x-www-form-urlencoded"
+          },
+          body: formData.toString()
+      })
+      .then(response => response.json())
+      .then(data => {
+          // Зберігання відповіді в localStorage
+          localStorage.setItem("authResponse", JSON.stringify(data));
+
+          alert(data.message); // Повідомлення про результат аутентифікації
+          if (data.success) {
+              // Перенаправлення на іншу сторінку після успішної аутентифікації
+              window.location.href = "/other-page";
+          }
+      })
+      .catch(error => console.error("Помилка: " + error));
+  });
+
+  // document.getElementById("loginForm").addEventListener("submit", function(event) {
+  //     event.preventDefault();
+
+  //     const username = document.getElementById("username").value;
+  //     const password = document.getElementById("password").value;
+
+  //     const formData = new URLSearchParams();
+  //     formData.append("grant_type", "password");
+  //     formData.append("username", username);
+  //     formData.append("password", password);
+  //     formData.append("scope", "default");
+  //     formData.append("client_id", "your-client-id");
+  //     formData.append("client_secret", "your-client-secret");
+
+  //     fetch("/auth/login", {
+  //         method: "POST",
+  //         headers: {
+  //             "Content-Type": "application/x-www-form-urlencoded"
+  //         },
+  //         body: formData.toString()
+  //     })
+  //     .then(response => response.json())
+  //     .then(data => {
+  //         // Зберігання відповіді в localStorage
+  //         localStorage.setItem("authResponse", JSON.stringify(data));
+
+  //         alert(data.message); // Повідомлення про результат аутентифікації
+  //         if (data.success) {
+  //             // Перенаправлення на іншу сторінку після успішної аутентифікації
+  //             window.location.href = "/other-page";
+  //         }
+  //     })
+  //     .catch(error => console.error("Помилка: " + error));
+  // });
+</script>
+{% endblock %}
