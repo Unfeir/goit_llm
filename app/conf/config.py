@@ -7,6 +7,8 @@ dotenv_path = find_dotenv(filename='.env', raise_error_if_not_found=False, usecw
 
 
 class Settings(BaseSettings):
+    path_static: str = 'static'
+    path_templates: str = 'templates'
     uvicorn_host: str = 'address'
     uvicorn_port: int = 0
     postgres_db: str = 'db_name'
