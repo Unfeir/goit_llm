@@ -1,30 +1,17 @@
-# from PyPDF2 import PdfReader
-from conf.messages import Msg
-from db.models import PDFfile, Question, User
 from fastapi import HTTPException, status
-from repository.basic import BasicCRUD
-from schemas.chat import ChatRequest, ChatResponse
 from sqlalchemy.orm import Session
 from transformers import pipeline
 
-# # moved to PDFController in pdf_controller ?:
-# # https://pypdf2.readthedocs.io/en/3.0.0/search.html?q=async&check_keywords=yes&area=default
-# def get_txt_from_pdf(file: str) -> str:
-#     """Creating a pdf reader object."""
-#     reader = PdfReader(file)
-#     text = ''
-
-#     for page in range(len(reader.pages)):
-#         text += reader.pages[page].extract_text()
-
-#     return text
+from conf.messages import Msg
+from db.models import PDFfile, Question, User
+from repository.basic import BasicCRUD
+from schemas.chat import ChatResponse, ChatRequest
 
 
 qa_model = pipeline('question-answering', model='distilbert-base-cased-distilled-squad')
 
 
 class RequestAnalyzer:
-
     @staticmethod
     async def get_the_answer(
                              qa_model: pipeline = qa_model,
@@ -42,7 +29,7 @@ class RequestAnalyzer:
     async def return_answer(user: User, file_id: int, question_id: int, db: Session) -> ChatResponse:
         # get txt from db
         pdf_text = await BasicCRUD.get_by_id(id_=file_id, model=PDFfile, db=db)
-        question = await BasicCRUD.get_by_id(id_=question_id, model=Question, db=db) # !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        question = await BasicCRUD.get_by_id(id_=question_id, model=Question, db=db)
         if not pdf_text:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=Msg.m_404_file_not_found.value)
         if user.id != pdf_text.user_id:

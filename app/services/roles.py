@@ -1,9 +1,10 @@
 from typing import List
 
-from conf.messages import Msg
-from db.models import User, UserRole
 from fastapi import Depends, HTTPException, Request, status
 from services.auth.user import AuthUser
+
+from conf.messages import Msg
+from db.models import User, UserRole
 
 
 class UserRoleAccess:

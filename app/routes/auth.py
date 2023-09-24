@@ -1,22 +1,26 @@
 from typing import Annotated, Optional, Union
 
+from fastapi import APIRouter, Depends, HTTPException, Security, status
+from fastapi.security import HTTPAuthorizationCredentials, OAuth2PasswordRequestForm
+from sqlalchemy.orm import Session
+
 from conf.messages import Msg
 from db.db import get_db
 from db.models import User
-from fastapi import APIRouter, Depends, HTTPException, Security, status
-from fastapi.security import HTTPAuthorizationCredentials, OAuth2PasswordRequestForm
 from repository.users import UserCRUD
 from schemas.user import Token, UserResponse, UserSignUp
 from services.auth.password import AuthPassword
 from services.auth.token import AuthToken
 from services.auth.user import AuthUser, security
 from services.loggs.loger import logger
-from sqlalchemy.orm import Session
+
 
 router = APIRouter(prefix='/auth', tags=['auth'])
 
 
-@router.post('/signup', response_model=UserResponse, status_code=status.HTTP_201_CREATED,
+@router.post(
+             '/signup',
+             response_model=UserResponse, status_code=status.HTTP_201_CREATED,
              description='Create new user')
 async def sign_up(
         body: UserSignUp,

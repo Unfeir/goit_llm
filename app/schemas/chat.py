@@ -9,8 +9,8 @@ class ChatRequest(BaseModel):
     question: str
     created_at: datetime
 
+
 class ChatResponse(BaseModel):
-    # answer_id: int  # auto to db! save chat
     answer: str
     score: float
     start: int
