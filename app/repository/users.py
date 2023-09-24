@@ -1,13 +1,14 @@
 from datetime import datetime
 from typing import Optional, Union
 
+from sqlalchemy.future import select
+from sqlalchemy.orm import Session
+
 from db.models import User
 from repository.basic import BasicCRUD
 from schemas.user import UserFullUpdate, UserUpdate
 from services.auth.password import AuthPassword
 from services.loggs.loger import logger
-from sqlalchemy.future import select
-from sqlalchemy.orm import Session
 
 
 class UserCRUD(BasicCRUD):
@@ -38,8 +39,8 @@ class UserCRUD(BasicCRUD):
         query = select(User).where(User.email == email)
         result = await db.execute(query)
         user = result.scalars().first()
-        return user
 
+        return user
 
     @classmethod
     async def update_user_profile(cls, user: User, body: Union[UserUpdate, UserFullUpdate], db: Session) -> User:
@@ -54,11 +55,11 @@ class UserCRUD(BasicCRUD):
 
         return user
 
-
     @classmethod
     async def ban_user(cls, user: User, active_status: bool,  db: Session) -> User:
         user.status_active = active_status
         await db.commit()
         await db.refresh(user)
         logger.warning(f'update user profile {user.email} was banned')
+
         return user

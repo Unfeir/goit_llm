@@ -1,13 +1,15 @@
 from typing import Generic, List, Optional, TypeVar, Union
 
+from sqlalchemy.future import select
+from sqlalchemy.orm import Session
+from sqlalchemy.sql import func
+
 from db.models import User, UserRole
 from schemas.history import HistoryBase
 from schemas.pdffile import PdfFileBase
 from schemas.user import UserSignUp
 from services.loggs.loger import logger
-from sqlalchemy.future import select
-from sqlalchemy.orm import Session
-from sqlalchemy.sql import func
+
 
 UM = TypeVar('UM')
 
@@ -27,6 +29,7 @@ class BasicCRUD(Generic[UM]):
         await db.commit()
         await db.refresh(new_item)
         logger.warning(f'creating {model.__name__} {new_item.id}')
+
         return new_item
 
     @classmethod
@@ -40,7 +43,9 @@ class BasicCRUD(Generic[UM]):
             await db.delete(item)
             await db.commit()
             logger.warning(f'delete {model.__name__} {item.id}')
+
             return True
+
         else:
             return False
 
@@ -50,6 +55,7 @@ class BasicCRUD(Generic[UM]):
         query = query.limit(limit).offset(skip)
         result = await db.execute(query)
         items = result.scalars().all()
+
         return items
 
     @classmethod
@@ -58,4 +64,5 @@ class BasicCRUD(Generic[UM]):
         await db.commit()
         await db.refresh(model)
         logger.warning(f'set avatar {model.id} with: {model.avatar=}')
+
         return model

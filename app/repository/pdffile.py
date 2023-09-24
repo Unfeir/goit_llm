@@ -7,8 +7,6 @@ from db.models import PDFfile
 from repository.basic import BasicCRUD
 from schemas.pdffile import PdfFileResponse
 
-# from services.pdf_controller import get_txt_from_pdf
-
 
 class PDFCRUD(BasicCRUD):
 
@@ -20,4 +18,5 @@ class PDFCRUD(BasicCRUD):
                                  .offset(skip)
                                  .limit(limit)
                                  )
+
         return files.scalars().all()
