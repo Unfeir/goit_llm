@@ -1,7 +1,7 @@
-# import sys
-# import os
-# cwd = os.getcwd()
-# sys.path.append(f'{cwd}/app')
+import sys
+import os
+cwd = os.getcwd()
+sys.path.append(f'{cwd}/app')
 
 import uvicorn
 from conf.config import get_settings
@@ -19,6 +19,7 @@ app.include_router(pdffile.router)
 app.include_router(chat.router)
 app.include_router(history.router)
 app.mount('/templates', StaticFiles(directory='templates'), name='templates')
+# app.mount('/templates', StaticFiles(directory=f'D:\\e\\goit_llm\\app\\templates'), name='templates')
 # app.mount('/services/chat/templates', StaticFiles(directory='services/chat/templates'), name='templates')
 # app.mount(f'/app/templates', StaticFiles(directory=f'/app/templates'), name='templates')
 

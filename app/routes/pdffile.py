@@ -44,6 +44,21 @@ async def get_pdf_text(
     return await PDFController.get_pdf_text(user=current_user, file_id=file_id, db=db)
 
 
+@router.get(
+            '/pdf_name',
+            response_model=PdfFileResponse,
+            dependencies=[Depends(allowed_all_roles_access)],
+            name='Get pdf-file name.'
+            )
+async def get_pdf_name(
+                       file_id: int = Query(...),
+                       current_user: User = Depends(AuthUser.get_current_user),
+                       credentials: HTTPAuthorizationCredentials = Security(security),
+                       db: Session = Depends(get_db)
+                       ) -> str:
+    return await PDFController.get_pdf_name(user=current_user, file_id=file_id, db=db)
+
+
 @router.delete(
                '/',
                status_code=status.HTTP_204_NO_CONTENT,

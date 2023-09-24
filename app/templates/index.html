@@ -1,22 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
-    <title>PDF-Responser</title>
-    <link rel="icon" href="data:;base64,=">
+    <title>Логін</title>
 </head>
-
 <body>
-<center>
-    <H3>Welcome PDF-Responser</H3>
-    Upload PDF-file:
-    <br>
-<form action="/uploadfile/" enctype="multipart/form-data" method="post">
-    <input type="file" name="file">
-    <input type="submit" value="Submit">
-</form>
-</center>
+    <h1>Логін</h1>
+    <form id="loginForm">
+        <label for="username">Логін:</label>
+        <input type="text" id="username" name="username" required><br><br>
+        <label for="password">Пароль:</label>
+        <input type="password" id="password" name="password" required><br><br>
+        <button type="submit">Увійти</button>
+    </form>
+    <a href="/templates/chat.html">CHAT</a>
+    <script>
+        document.getElementById("loginForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            
+            const formData = new URLSearchParams();
+            formData.append("grant_type", "password");
+            formData.append("username", username);
+            formData.append("password", password);
+            formData.append("scope", "default");
+            formData.append("client_id", "your-client-id");
+            formData.append("client_secret", "your-client-secret");
+            
+            fetch("/auth/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: formData.toString()
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Зберігання відповіді в localStorage
+                localStorage.setItem("authResponse", JSON.stringify(data));
+                
+                alert(data.message); // Повідомлення про результат аутентифікації
+                if (data.success) {
+                    // Перенаправлення на іншу сторінку після успішної аутентифікації
+                    window.location.href = "/other-page";
+                }
+            })
+            .catch(error => console.error("Помилка: " + error));
+        });
+    </script>
 </body>
-
 </html>

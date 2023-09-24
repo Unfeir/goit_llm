@@ -34,6 +34,15 @@ class PDFController:
         return pdf_text
 
     @staticmethod
+    async def get_pdf_name(user: User, file_id: int, db: Session) -> str:
+        pdf_name = await BasicCRUD.get_by_id(id_=file_id, model=PDFfile, db=db)
+        if not pdf_name:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=Msg.m_404_file_not_found.value)
+        if user.id != pdf_name.user_id:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=Msg.m_403_foreign_file.value)
+        return pdf_name.filename
+
+    @staticmethod
     async def del_pdf_text(user: User, file_id: int, db: Session) -> None:
         pdf_text = await BasicCRUD.get_by_id(id_=file_id, model=PDFfile, db=db)
         if not pdf_text:

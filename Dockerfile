@@ -18,9 +18,9 @@ RUN poetry install --no-root
 RUN poetry shell
 
 COPY ./app .
-COPY ../migrations ./migrations
+COPY ./migrations ./migrations
 COPY alembic.ini .
-COPY ../docker ./docker
+COPY ./docker ./docker
 
 
 CMD ["uvicorn", "utils.main:app", "--host", "0.0.0.0", "--reload", "--port", "8000"]
