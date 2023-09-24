@@ -1,12 +1,11 @@
 from typing import List, Optional
 
-from db.models import History, PDFfile
-from repository.basic import BasicCRUD
-from schemas.history import HistoryResponse
 from sqlalchemy.future import select
 from sqlalchemy.orm import Session
 
-# from services.pdf_controller import get_txt_from_pdf
+from db.models import History, PDFfile
+from repository.basic import BasicCRUD
+from schemas.history import HistoryResponse
 
 
 class HistoryCRUD(BasicCRUD):
@@ -20,4 +19,5 @@ class HistoryCRUD(BasicCRUD):
                                  .offset(skip)
                                  .limit(limit)
                                  )
+
         return files.scalars().all()
