@@ -1,14 +1,17 @@
+import json
 from typing import List
 
 from conf.messages import Msg
 from db.db import get_db
 from db.models import History, PDFfile
-from fastapi import WebSocket
+from fastapi import WebSocket, Depends
 from repository.basic import BasicCRUD
 from repository.history import HistoryCRUD
 from schemas.history import HistoryBase
+from services.auth.user import AuthUser
 from services.loggs.loger import logger
 from transformers import pipeline
+from sqlalchemy.orm import Session
 
 
 class ConnectionManager:
@@ -19,8 +22,8 @@ class ConnectionManager:
         await websocket.accept()
         self.connections.append(websocket)
 
-    # def disconnect(self, websocket: WebSocket, user: str):
-    #     self.connections.remove((websocket, user))
+    def disconnect(self, websocket: WebSocket, user: str):
+        self.connections.remove((websocket, user))
 
     async def broadcast(self, data: str):
         logger.debug(f'{data=}')
@@ -46,18 +49,23 @@ class LLMHandler:
 
     async def get_answer(self, data: str) -> str:
         """Returns an answer by model."""
-        # question = "Where do we live?"
-        # context = "We are the Fast Rabbit team and we live in Kyiv."
         await self.get_session()
-        text_id, question = data.split(',', 1)
-        pdf_text = await BasicCRUD.get_by_id(int(text_id), PDFfile, self.db)
-        if not pdf_text:
+        data_dict = json.loads(data)
+        file_id = data_dict['file_id']
+        question = data_dict['text']
+        token = data_dict['accessToken']
+
+        user = await AuthUser.get_current_user(token=token, db=self.db)
+        logger.debug(f'{user.__dict__=}')
+        pdf_text = await BasicCRUD.get_by_id(int(file_id), PDFfile, self.db)
+
+        if not pdf_text or user.id != pdf_text.user_id:
             return Msg.m_404_file_not_found.value
-        # logger.debug(f'{pdf_text=}')
+
         result = self.model(question=question, context=pdf_text.context)
 
-        logger.debug(f'{result=}')
-        await self.write_answer(int(text_id), question, result['answer'])
+        # logger.debug(f'{result=}')
+        await self.write_answer(int(file_id), question, result['answer'])
 
         return result['answer']
         ## {'answer': 'Kyiv', 'end': 39, 'score': 0.953, 'start': 31}

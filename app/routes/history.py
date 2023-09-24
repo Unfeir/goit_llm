@@ -22,9 +22,7 @@ router = APIRouter(prefix='/history', tags=['history'])
 async def get_file_history(
         file_id: int = Query(...),
         skip: int = 0,
-        limit
-
-        : int = 10,
+        limit: int = 10,
         current_user: User = Depends(AuthUser.get_current_user),
         credentials: HTTPAuthorizationCredentials = Security(security),
         db: Session = Depends(get_db)

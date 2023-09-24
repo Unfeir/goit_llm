@@ -1,51 +1,112 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Chat</title>
-        <link rel="icon" href="data:;base64,=">
-    </head>
-    <body>
-        <h1>WebSocket Chat</h1>
-        <button onClick="showForm(event)" id="connect">Connect</button>
-        <form action="" onsubmit="sendMessage(event)" id="form" style="display: none">
-            <input type="text" id="messageText" autocomplete="off"/>
-            <button>Send</button>
-        </form>
-        <ul id='messages'>
+{% extends "base.html" %}
+
+{% block content %}
+<div class="chat-body">
+    <div class="chat-header">
+        <a class="custom-button" href="/pages/upload">Go back</a>
+        <div class="chat-profile" id="profile"></div>
+        <h4 class="chat-title"> Chat PDF </h4>
+        <div class="chat-file" id="file"></div>
+    </div>
+    <div class="messages-block">
+        <ul class="messages-list" id="messages">
         </ul>
-        <script>
-            var clientID = Date.now();
-            var ws = new WebSocket(`ws://localhost:8000/chat/ws/${clientID}`);
+        <form class="message-form" id="chat-form">
+            <input id="messageText" type="text" class="message-input" placeholder="Write your message">
+            <button id="send" class="custom-button">Send</button>
+        </form>
+    </div>
+</div>
 
-            function processMessage(event) {
-                var messages = document.getElementById('messages')
-                var message = document.createElement('li')
-                var content = document.createTextNode(event.data)
-                message.appendChild(content);
-                messages.appendChild(message);
-            }
+<script>
+    const token = JSON.parse(localStorage.getItem("user-api")).access_token;
+    const file_id = localStorage.getItem("file-id")
 
-            ws.onmessage = processMessage;
+    fetch("/auth/me", {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("profile").textContent = data.username;
+    });
 
-            function sendMessage(event) {
-                var input = document.getElementById("messageText")
-                var message = document.createElement('li')
-                var content = document.createTextNode(input.value)
-                message.appendChild(content);
-                messages.appendChild(message);
-                ws.send(input.value);
+    fetch(`/pdffiles?file_id=${file_id}`, {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("file").textContent = data.filename;
+    });
 
-                input.value = ''
-                event.preventDefault()
-            }
-            
-            function showForm(event) {
-                var button = document.getElementById("connect");
-                var form = document.getElementById("form");
-                button.style.display = "none";
-                form.style.display = "block";
-            }
+    fetch(`/history/get_file_history?file_id=${file_id}`, {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('data', data)
+        data.forEach(item => {
+            console.log('item', item)
+            Object.keys(item).forEach(key => {
+                if (key === 'question') {
+                    var messages = document.getElementById('messages')
+                    var message = document.createElement('li')
+                    message.classList.add('message-item', 'question')
+                    var content = document.createTextNode(item.question)
+                    message.appendChild(content);
+                    messages.appendChild(message);
+                }
+                if (key === 'answer') {
+                    var messages = document.getElementById('messages')
+                    var message = document.createElement('li')
+                    message.classList.add('message-item', 'answer')
+                    var content = document.createTextNode(item.answer)
+                    message.appendChild(content);
+                    messages.appendChild(message);
+                }
+            })
+        })
+    });
 
-        </script>
-    </body>
-</html>
+    var ws = new WebSocket(`ws://localhost:8000/chat/ws/${token}`);
+
+    function processMessage(event) {
+        var messages = document.getElementById('messages')
+        var message = document.createElement('li')
+        message.classList.add('message-item', 'answer')
+        var content = document.createTextNode(event.data)
+        message.appendChild(content);
+        messages.appendChild(message);
+    }
+
+    ws.onmessage = processMessage;
+
+
+    function sendMessage(event) {
+        event.preventDefault();
+        var input = document.getElementById("messageText")
+        var message = document.createElement('li')
+        message.classList.add('message-item', 'question')
+        var content = document.createTextNode(input.value)
+        message.appendChild(content);
+        messages.appendChild(message);
+
+        var messageWithToken = {
+            text: input.value,
+            accessToken: token,
+            file_id: localStorage.getItem("file-id")
+        };
+
+        ws.send(JSON.stringify(messageWithToken));
+        input.value = ''
+        event.preventDefault()
+    }
+
+    document.querySelector("#send").addEventListener("click", sendMessage);
+</script>
+{% endblock %}
