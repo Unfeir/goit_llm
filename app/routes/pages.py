@@ -1,13 +1,20 @@
 from fastapi import APIRouter, Request, Depends
 from fastapi.templating import Jinja2Templates
 
+from conf.config import get_settings
+# from fastapi.templating import Jinja2Templates
+# from fastapi import Request
+#
+credentials_paths = get_settings()
+#
+templates = Jinja2Templates(directory=credentials_paths.path_templates)
 
 router = APIRouter(
     prefix="/pages",
     tags=["Pages"]
 )
 
-templates = Jinja2Templates(directory="templates")
+# templates = Jinja2Templates(directory="templates")
 
 
 @router.get("/index")

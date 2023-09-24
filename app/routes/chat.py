@@ -15,6 +15,14 @@ from services.roles import allowed_all_roles_access
 from services.textprocessor import RequestAnalyzer
 from sqlalchemy.orm import Session
 
+# from conf.config import get_settings
+# from fastapi.templating import Jinja2Templates
+# from fastapi import Request
+#
+# credentials_paths = get_settings()
+#
+# templates = Jinja2Templates(directory=credentials_paths.path_templates)
+
 router = APIRouter(prefix='/chat', tags=['chat'])
 
 
@@ -50,7 +58,7 @@ async def get_answer(
     return await RequestAnalyzer.return_answer(user=current_user, file_id=file_id, question_id=question_id, db=db)
 
 
-@router.websocket("/ws/{token}")
+@router.websocket('/ws/{token}')
 async def websocket_endpoint(websocket: WebSocket, token: str):
     logger.debug(f'{token=}')
     await manager.connect(websocket)
@@ -58,11 +66,6 @@ async def websocket_endpoint(websocket: WebSocket, token: str):
         data = await websocket.receive_text()
         logger.debug(f'{data=}')
         response = await model.get_answer(data)
+
         # await manager.broadcast(f"Client {client_id}: {data}")
         await websocket.send_text(response)
-
-
-from fastapi.templating import Jinja2Templates
-from fastapi import Request
-
-templates = Jinja2Templates(directory="templates")

@@ -1,21 +1,24 @@
-# import sys
-# import os
-# cwd = os.getcwd()
+import sys
+import os
+cwd = os.getcwd()
 # sys.path.append(f'{cwd}/app')
+sys.path.append(f'{cwd}\\app')
 
 import uvicorn
 from fastapi.templating import Jinja2Templates
 
 from conf.config import get_settings
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from routes import auth, chat, history, pdffile, users, pages
 from services.loggs.loger import logger
 
+credentials = get_settings()
+
 app = FastAPI()
-app.mount("/static", StaticFiles(directory="static"), name="static")
-templates = Jinja2Templates(directory="templates")
+app.mount("/static", StaticFiles(directory=credentials.path_static), name="static")
+templates = Jinja2Templates(directory=credentials.path_templates)
 
 app.include_router(auth.router)
 app.include_router(users.router)
@@ -42,19 +45,27 @@ app.add_middleware(
 )
 
 
-@app.get("/")
+
+@app.get('/')
+def get_index_page(request: Request):
+    return templates.TemplateResponse("index.html", {"request": request})
+
+
+@app.get('/healthchecker')
 async def healthchecker() -> dict:
     logger.warning('App started')
     logger.debug('Everything is Ok')
     return {
-        "status_code": 200,
-        "detail": "ok",
-        "result": "working",
+        'status_code': 200,
+        'detail': 'ok',
+        'result': 'working',
     }
 
 
 if __name__ == '__main__':
-    credentials = get_settings()
+    # credentials = get_settings()
     uvicorn.run('main:app', host=credentials.uvicorn_host, port=credentials.uvicorn_port, reload=True)
 
+
+# http://127.0.0.1:8000
 # http://127.0.0.1:8000/docs
