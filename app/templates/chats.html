@@ -44,41 +44,6 @@
             left: 20px;
         }
     </style>
-    <script>
-        $(document).ready(function(){
-            var current_user;
-            $.get("/api/current_user",function(response){
-                current_user = response;
-                $("#profile").text(current_user);
-            });
-            var receiver = "";
-            // create websocket
-            var socket = new WebSocket("ws://127.0.0.1:8000/api/chat");
-            socket.onmessage = function(event) {
-                var parent = $("#messages");
-                var data = JSON.parse(event.data);
-                var sender = data['sender'];
-                if (sender == current_user)
-                    sender = "You";
-                var message = data['message']
-                var content = "<p><strong>"+sender+" </strong> <span> "+message+"</span></p>";
-                parent.append(content);
-            };
-            $("#chat-form").on("submit", function(e){
-                e.preventDefault();
-                var message = $("input").val();
-                if (message){
-                    data = {
-                        "sender": current_user,
-                        "message": message
-                    };
-                    socket.send(JSON.stringify(data));
-                    $("input").val("");
-                    document.cookie = 'X-Authorization=; path=/;';
-                }
-            });
-        });
-    </script>
 </head>
 <body>
     <div class="chat-body card">
@@ -93,5 +58,68 @@
             </form>
         </div>
     </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            let current_user;
+            const token = JSON.parse(localStorage.getItem("user-api")).access_token;
+            console.log('token', token)
+
+            fetch("/auth/me", {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('data', data)
+                    current_user = data;
+                    document.getElementById("profile").textContent = current_user.username;
+                });
+
+            let receiver = "";
+
+            // Create a WebSocket connection
+            const socket = new WebSocket(`ws://localhost:8000/chat/ws/${token}`);
+
+            socket.onmessage = function(event) {
+                const parent = document.getElementById("messages");
+                const data = JSON.parse(event.data);
+                let sender = data.sender;
+
+                if (sender == current_user) {
+                    sender = "You";
+                }
+
+                const message = data.message;
+                const content = `<p><strong>${sender}</strong> <span>${message}</span></p>`;
+
+                parent.insertAdjacentHTML("beforeend", content);
+            };
+
+            const chatForm = document.getElementById("chat-form");
+
+            chatForm.addEventListener("submit", function(e) {
+                e.preventDefault();
+
+                const messageInput = document.querySelector("#chat-form input");
+                const message = messageInput.value;
+
+                if (message) {
+                    const data = {
+                        sender: current_user,
+                        message: message
+                    };
+
+                    // Send data as JSON through the WebSocket
+                    socket.send(JSON.stringify(data));
+                    messageInput.value = "";
+
+                    // Clear the X-Authorization cookie
+                    document.cookie = 'X-Authorization=; path=/;';
+                }
+            });
+        });
+    </script>
 </body>
 </html>

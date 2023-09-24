@@ -50,9 +50,9 @@ async def get_answer(
     return await RequestAnalyzer.return_answer(user=current_user, file_id=file_id, question_id=question_id, db=db)
 
 
-@router.websocket("/ws/{client_id}")
-async def websocket_endpoint(websocket: WebSocket, client_id: int):
-    logger.debug(f'{client_id=}')
+@router.websocket("/ws/{token}")
+async def websocket_endpoint(websocket: WebSocket, token: str):
+    logger.debug(f'{token=}')
     await manager.connect(websocket)
     while True:
         data = await websocket.receive_text()

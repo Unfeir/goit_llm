@@ -35,6 +35,7 @@ async def sign_up(
 
 @router.post('/login', response_model=Token)
 async def login(body: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)) -> dict:
+    logger.debug(f'{body=}')
     user: Union[User, bool] = await AuthUser.authenticate_user(username=body.username, password=body.password, db=db)
     if not user:
         logger.error(f'{body.username} - {Msg.m_401_unauthorized.value}')
@@ -43,7 +44,7 @@ async def login(body: OAuth2PasswordRequestForm = Depends(), db: Session = Depen
         logger.error(f'{body.username} - {Msg.m_403_user_banned.value}')
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=Msg.m_403_user_banned.value)
     access_token: Annotated[str, Depends(AuthToken.oauth2_scheme)] = await AuthToken.create_token(data=user)
-    return {'access_token': access_token, 'token_type': 'Bearer'}
+    return {'access_token': access_token, 'token_type': 'Bearer', 'success': True}
 
 
 @router.get('/me', response_model=UserResponse, name='Get user info')

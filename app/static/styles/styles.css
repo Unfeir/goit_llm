@@ -11,17 +11,20 @@ body {
 .dotted-background {
   /* width: 100%; */
   /* height: 300px; */
-  background-color: #040404; /* Background color */
-  background-image: radial-gradient(circle, #9CA3AF 2px, transparent 1px); /* Dotted pattern */
-  background-size: 10px 10px; /* Adjust the size and spacing of dots */
+  /* background-color: #040404;  */
+  /* background-image: radial-gradient(circle, #9CA3AF 2px, transparent 1px); */
+  background: linear-gradient(to bottom, #FFD60A, #D062D1);
+  /* background-size: 10px 10px; Adjust the size and spacing of dots */
 }
 
 .lined-background {
   /* width: 100%; */
   /* height: 300px; */
-  background-color: #040404;
-  background-image: radial-gradient(circle, #9CA3AF 1px, transparent 1px); /* Dotted pattern */
-  background-size: 1px 10px;
+  /* background-color: #040404;
+  background-image: radial-gradient(circle, #9CA3AF 1px, transparent 1px);
+  background-size: 1px 10px; */
+  background: linear-gradient(to bottom, #D062D1, #FFD60A);
+
 }
 
 
@@ -49,6 +52,15 @@ body {
   top: -20px;
 }
 
+.block-centered {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: -20px;
+  gap: 1rem;
+}
+
 .up-block {
   display: flex;
   align-items: center;
@@ -65,10 +77,6 @@ body {
   align-items: center;
   width: 100%;
   height: 50vh;
-  padding-top: 20px;
-  background-color: #040404;
-  background-image: radial-gradient(circle, #6B7280 1px, transparent 1px); /* Dotted pattern */
-  background-size: 1px 10px; /* Adjust the size and spacing of dots */
 }
 
 .upload-title {
@@ -158,7 +166,6 @@ body {
 }
 
 .login-block {
-
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -186,19 +193,4 @@ body {
   border-radius: 5px;
   border: 1px solid #9CA3AF;
   outline: none;
-}
-
-.login-button {
-  width: 30px;
-  height: 40px;
-  margin-top: 10px;
-  padding: 0 10px;
-  border-radius: 5px;
-  border: none;
-  outline: none;
-  background-color: #9C6FE2;
-  color: #fff;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
 }

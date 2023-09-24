@@ -36,6 +36,7 @@ class UserResponse(BaseModel):
     avatar: str | None
     role: UserRole
     status_active: bool
+    success: bool = True
 
     class ConfigDict:
         from_attributes = True
@@ -44,3 +45,4 @@ class UserResponse(BaseModel):
 class Token(BaseModel):
     access_token: str
     token_type: str
+    success: bool
