@@ -1,6 +1,6 @@
 import enum
 
-from sqlalchemy import Boolean, Column, Enum, Integer, String, func
+from sqlalchemy import Column, Boolean, Enum, func, Integer, String
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql.schema import ForeignKey
 from sqlalchemy.sql.sqltypes import DateTime
@@ -25,10 +25,9 @@ class User(Base):
     role = Column('role', Enum(UserRole), default=UserRole.USER)
     confirmed = Column(Boolean, default=True)
     status_active = Column(Boolean, default=True)
-
     pdf_files = relationship('PDFfile', backref='user')
 
-    __mapper_args__ = {"eager_defaults": True}
+    __mapper_args__ = {'eager_defaults': True}
 
     def to_dict(self) -> dict:
         return {
@@ -61,7 +60,6 @@ class PDFfile(Base):
     user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
     created_at = Column(DateTime, default=func.now())
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
-
     history = relationship('History', backref='file')
 
 
@@ -69,8 +67,8 @@ class History(Base):
     __tablename__ = 'history'
     id = Column(Integer, primary_key=True)
     fil_id = Column(Integer, ForeignKey('pdffiles.id', ondelete='CASCADE'))
-    question = Column(String)  # ? question id?
-    answer = Column(String)  # # ? answer id?
+    question = Column(String)
+    answer = Column(String)
     created_at = Column(DateTime, default=func.now())
 
 
@@ -78,6 +76,6 @@ class Question(Base):
     __tablename__ = 'questions'
     id = Column(Integer, primary_key=True)
     fil_id = Column(Integer, ForeignKey('pdffiles.id', ondelete='CASCADE'))
-    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))  # !
+    user_id = Column(Integer, ForeignKey('users.id', ondelete='CASCADE'))
     question = Column(String)
     created_at = Column(DateTime, default=func.now())

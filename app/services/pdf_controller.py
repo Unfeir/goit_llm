@@ -1,7 +1,7 @@
 from io import BytesIO
 from typing import List
 
-from fastapi import HTTPException, UploadFile, status
+from fastapi import HTTPException, status, UploadFile
 from PyPDF2 import PdfReader
 from sqlalchemy.orm import Session
 
@@ -15,7 +15,11 @@ from schemas.pdffile import PdfFileBase, PdfFileResponse
 class PDFController:
 
     @staticmethod
-    async def upload_pdffile(user: User, file: UploadFile, db: Session) -> PdfFileResponse:
+    async def upload_pdffile(
+                             user: User,
+                             file: UploadFile,
+                             db: Session
+                             ) -> PdfFileResponse:
         pdf_data = await PDFController.get_txt_from_pdf(file)
         pdffile = PdfFileBase(
                               user_id=user.id,
@@ -25,28 +29,46 @@ class PDFController:
         return await BasicCRUD.create_item(PDFfile, pdffile, db)
 
     @staticmethod
-    async def get_pdf_text(user: User, file_id: int, db: Session) -> PdfFileResponse:
+    async def get_pdf_text(
+                           user: User,
+                           file_id: int,
+                           db: Session
+                           ) -> PdfFileResponse:
         pdf_text = await BasicCRUD.get_by_id(id_=file_id, model=PDFfile, db=db)
         if not pdf_text:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=Msg.m_404_file_not_found.value)
+
         if user.id != pdf_text.user_id:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=Msg.m_403_foreign_file.value)
+
         return pdf_text
 
     @staticmethod
-    async def del_pdf_text(user: User, file_id: int, db: Session) -> None:
+    async def del_pdf_text(
+                           user: User,
+                           file_id: int,
+                           db: Session
+                           ) -> None:
         pdf_text = await BasicCRUD.get_by_id(id_=file_id, model=PDFfile, db=db)
         if not pdf_text:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=Msg.m_404_file_not_found.value)
+
         if user.id != pdf_text.user_id:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=Msg.m_403_foreign_file.value)
+
         await BasicCRUD.delete_by_id(id_=file_id, model=PDFfile, db=db)
 
     @staticmethod
-    async def get_all_user_pdf_text(user: User, skip: int, limit: int, db: Session) -> List[PdfFileResponse]:
+    async def get_all_user_pdf_text(
+                                    user: User,
+                                    skip: int,
+                                    limit: int,
+                                    db: Session
+                                    ) -> List[PdfFileResponse]:
         result = await PDFCRUD.get_by_user(user_id=user.id, skip=skip, limit=limit, db=db)
         for file in result:
             file.context = f'{file.context[:30]}...'
+
         return result
 
     @staticmethod
@@ -56,6 +78,7 @@ class PDFController:
         file_name, extension = file.filename.split('.')
         if extension != 'pdf':
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=Msg.m_403_not_pdf.value)
+
         file_content = await file.read()
         pdf_file = BytesIO(file_content)
         pdf_reader = PdfReader(pdf_file)
