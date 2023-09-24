@@ -1,55 +1,112 @@
-
 {% extends "base.html" %}
 
 {% block content %}
-<div class="flex flex-col items-center">
-    <h1>WebSocket Chat</h1>
-    <h2>Your ID: <span id="ws-id"></span></h2>
-    <form action="" onsubmit="sendMessage(event)">
-        <input class="bg-green-300" type="text" id="messageText" autocomplete="off"/>
-        <button>Send</button>
-    </form>
-    <ul id='messages'>
-</ul>
+<div class="chat-body">
+    <div class="chat-header">
+        <a class="custom-button" href="/pages/upload">Go back</a>
+        <div class="chat-profile" id="profile"></div>
+        <h4 class="chat-title"> Chat PDF </h4>
+        <div class="chat-file" id="file"></div>
+    </div>
+    <div class="messages-block">
+        <ul class="messages-list" id="messages">
+        </ul>
+        <form class="message-form" id="chat-form">
+            <input id="messageText" type="text" class="message-input" placeholder="Write your message">
+            <button id="send" class="custom-button">Send</button>
+        </form>
+    </div>
 </div>
+
 <script>
-    async function getLastMessages() {
-        const url = 'http://localhost:8000/chat/last_messages'
-        const response = await fetch(url, {
-            method: 'GET'
-        })
-        return response.json()
-    }
+    const token = JSON.parse(localStorage.getItem("user-api")).access_token;
+    const file_id = localStorage.getItem("file-id")
 
-    getLastMessages()
-        .then(messages => {
-            appendMessage("Предыдущие 5 сообщений:")
-            messages.forEach(msg => {
-                appendMessage(msg.message)
+    fetch("/auth/me", {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("profile").textContent = data.username;
+    });
+
+    fetch(`/pdffiles?file_id=${file_id}`, {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById("file").textContent = data.filename;
+    });
+
+    fetch(`/history/get_file_history?file_id=${file_id}`, {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('data', data)
+        data.forEach(item => {
+            console.log('item', item)
+            Object.keys(item).forEach(key => {
+                if (key === 'question') {
+                    var messages = document.getElementById('messages')
+                    var message = document.createElement('li')
+                    message.classList.add('message-item', 'question')
+                    var content = document.createTextNode(item.question)
+                    message.appendChild(content);
+                    messages.appendChild(message);
+                }
+                if (key === 'answer') {
+                    var messages = document.getElementById('messages')
+                    var message = document.createElement('li')
+                    message.classList.add('message-item', 'answer')
+                    var content = document.createTextNode(item.answer)
+                    message.appendChild(content);
+                    messages.appendChild(message);
+                }
             })
-            appendMessage("\nНовые сообщения:")
         })
+    });
 
-    function appendMessage(msg) {
-        let messages = document.getElementById('messages')
-        let message = document.createElement('li')
-        let content = document.createTextNode(msg)
-        message.appendChild(content)
-        messages.appendChild(message)
+    var ws = new WebSocket(`ws://localhost:8000/chat/ws/${token}`);
+
+    function processMessage(event) {
+        var messages = document.getElementById('messages')
+        var message = document.createElement('li')
+        message.classList.add('message-item', 'answer')
+        var content = document.createTextNode(event.data)
+        message.appendChild(content);
+        messages.appendChild(message);
     }
 
-    let client_id = Date.now()
-    document.querySelector("#ws-id").textContent = client_id;
-    let ws = new WebSocket(`ws://localhost:8000/chat/ws/${client_id}`);
-    ws.onmessage = function (event) {
-        appendMessage(event.data)
-    };
+    ws.onmessage = processMessage;
+
 
     function sendMessage(event) {
-        let input = document.getElementById("messageText")
-        ws.send(input.value)
+        event.preventDefault();
+        var input = document.getElementById("messageText")
+        var message = document.createElement('li')
+        message.classList.add('message-item', 'question')
+        var content = document.createTextNode(input.value)
+        message.appendChild(content);
+        messages.appendChild(message);
+
+        var messageWithToken = {
+            text: input.value,
+            accessToken: token,
+            file_id: localStorage.getItem("file-id")
+        };
+
+        ws.send(JSON.stringify(messageWithToken));
         input.value = ''
         event.preventDefault()
     }
+
+    document.querySelector("#send").addEventListener("click", sendMessage);
 </script>
 {% endblock %}

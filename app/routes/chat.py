@@ -59,28 +59,10 @@ async def websocket_endpoint(websocket: WebSocket, token: str):
         logger.debug(f'{data=}')
         response = await model.get_answer(data)
         # await manager.broadcast(f"Client {client_id}: {data}")
-        await websocket.send_text(f'response = {response}')
+        await websocket.send_text(response)
 
 
 from fastapi.templating import Jinja2Templates
 from fastapi import Request
 
 templates = Jinja2Templates(directory="templates")
-
-
-@router.get(
-    '/get_caht',
-    response_class=RedirectResponse,
-    dependencies=[Depends(allowed_all_roles_access)],
-    name='Get Answer from model.'
-)
-async def get_answer(request: Request,
-                     token: Annotated[str, Depends(AuthToken.oauth2_scheme)],
-                     current_user: User = Depends(AuthUser.get_current_user),
-                     credentials: HTTPAuthorizationCredentials = Security(security),
-                     db: Session = Depends(get_db)
-                     ) -> Any:
-    variable = token
-
-    print(f'{templates=}')
-    return templates.TemplateResponse("chat.html", {"request": request, "variable": variable})

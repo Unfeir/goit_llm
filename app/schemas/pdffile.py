@@ -12,6 +12,7 @@ class PdfFileBase(BaseModel):
 class PdfFileResponse(PdfFileBase):
     id: int
     created_at: datetime
+    success: bool = True
 
     class ConfigDict:
         from_attributes = True

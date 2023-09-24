@@ -41,12 +41,9 @@
       .then(response => response.json())
       .then(data => {
         console.log('data', data)
-          // Зберігання відповіді в localStorage
           localStorage.setItem("user-api", JSON.stringify(data));
-
           if (data.success) {
-              // Перенаправлення на іншу сторінку після успішної аутентифікації
-              window.location.href = "/pages/chats";
+              window.location.href = "/pages/upload";
           }
       })
       .catch(error => console.error("Помилка: " + error));

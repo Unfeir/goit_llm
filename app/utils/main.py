@@ -53,10 +53,6 @@ async def healthchecker() -> dict:
     }
 
 
-# ----- alternative simplest CHAT --ok------------------------
-
-
-
 if __name__ == '__main__':
     credentials = get_settings()
     uvicorn.run('main:app', host=credentials.uvicorn_host, port=credentials.uvicorn_port, reload=True)

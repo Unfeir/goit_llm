@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="login-block">
+  <h1 class="login-title">Upload file and start chat</h1>
+  <form class="upload-form"id="uploadForm">
+      <input id="uploadInput" class="upload-input" type="file" accept="application/pdf" required>
+      <button class="custom-button" id="uploadBtn">Upload</button>
+  </form>
+</div>
+
+<script>
+  document.getElementById("uploadBtn").addEventListener("click", function(event) {
+      event.preventDefault();
+      const file = document.getElementById("uploadInput").files[0];
+      const formData = new FormData();
+      formData.append("file", file);
+      fetch("/pdffiles", {
+          method: "POST",
+          headers: {
+            "Authorization": "Bearer " + JSON.parse(localStorage.getItem("user-api")).access_token
+          },
+          body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              localStorage.setItem("file-id", data.id);
+              window.location.href = "/pages/chat";
+          }
+      })
+      .catch(error => console.error(error));
+  });
+
+</script>
+{% endblock %}

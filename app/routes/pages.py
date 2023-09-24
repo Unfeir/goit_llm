@@ -25,9 +25,9 @@ def get_index_page(request: Request):
     return templates.TemplateResponse("login.html", {"request": request})
 
 
-@router.get("/chats")
-def get_chat_page(request: Request):
-    return templates.TemplateResponse("chats.html", {"request": request})
+@router.get("/upload")
+def get_index_page(request: Request):
+    return templates.TemplateResponse("upload.html", {"request": request})
 
 
 @router.get("/chat")

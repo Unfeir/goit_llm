@@ -174,12 +174,12 @@ select {
 Correct the inability to style clickable types in iOS and Safari.
 */
 
-/* button,
+button,
 [type='button'],
 [type='reset'],
 [type='submit'] {
 	-webkit-appearance: button;
-} */
+}
 
 /**
 Remove the inner border and padding in Firefox.
@@ -271,4 +271,10 @@ Add the correct display in Chrome and Safari.
 
 summary {
 	display: list-item;
+}
+
+ul {
+	list-style: none;
+	margin: 0;
+	padding: 0;
 }
