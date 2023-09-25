@@ -10,7 +10,7 @@ from db.models import User
 # from services.auth.token import AuthToken
 from schemas.chat import ChatRequest, ChatResponse
 from services.auth.user import AuthUser, security
-from services.chat.chat_controller import manager, model
+from services.chat.chat_controller import manager, model_lln
 from services.loggs.loger import logger
 from services.roles import allowed_all_roles_access
 from services.textprocessor import RequestAnalyzer
@@ -58,7 +58,7 @@ async def websocket_endpoint(websocket: WebSocket, token: str):
     while True:
         data = await websocket.receive_text()
         # logger.debug(f'{data=}')
-        response = await model.get_answer(data)
+        response = await model_lln.get_answer(data)
 
         # await manager.broadcast(f"Client {client_id}: {data}")
         await websocket.send_text(response)
