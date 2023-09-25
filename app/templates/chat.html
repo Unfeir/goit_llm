@@ -11,6 +11,7 @@
     <div class="messages-block">
         <ul class="messages-list" id="messages">
         </ul>
+        <div id="loader" class="loader visually-hidden">LLM is thinking...</div>
         <form class="message-form" id="chat-form">
             <input id="messageText" type="text" class="message-input" placeholder="Write your message">
             <button id="send" class="custom-button">Send</button>
@@ -49,7 +50,6 @@
     })
     .then(response => response.json())
     .then(data => {
-        console.log('data', data)
         data.forEach(item => {
             console.log('item', item)
             Object.keys(item).forEach(key => {
@@ -76,6 +76,7 @@
     var ws = new WebSocket(`ws://localhost:8000/chat/ws/${token}`);
 
     function processMessage(event) {
+        document.getElementById("loader").classList.add("visually-hidden");
         var messages = document.getElementById('messages')
         var message = document.createElement('li')
         message.classList.add('message-item', 'answer')
@@ -89,6 +90,7 @@
 
     function sendMessage(event) {
         event.preventDefault();
+        document.getElementById("loader").classList.remove("visually-hidden");
         var input = document.getElementById("messageText")
         var message = document.createElement('li')
         message.classList.add('message-item', 'question')

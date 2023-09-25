@@ -10,6 +10,7 @@
       <input class="login-input" type="password" id="password" name="password" required><br><br>
       <button class="custom-button" id="submitBtn">Login</button>
   </form>
+  <div id="error" class="error"></div>
   <a class="custom-button" href="/pages/signup">Sign up</a>
 </div>
 
@@ -44,6 +45,8 @@
           localStorage.setItem("user-api", JSON.stringify(data));
           if (data.success) {
               window.location.href = "/pages/upload";
+          } else {
+              document.getElementById("error").textContent = data.detail;
           }
       })
       .catch(error => console.error("Помилка: " + error));

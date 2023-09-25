@@ -3,18 +3,61 @@
 {% block content %}
 <div class="login-block">
   <h1 class="login-title">Upload file and start chat</h1>
-  <form class="upload-form"id="uploadForm">
+  <div class="upload-wrapper">
+    <div class="upload-form">
+      <select class="select-file" name="files" id="files"></select>
+      <button class="custom-button" id="goToChatBtn" disabled>Go to chat</button>
+    </div>
+    <p>OR</p>
+    <form class="upload-form"id="uploadForm">
       <input id="uploadInput" class="upload-input" type="file" accept="application/pdf" required>
       <button class="custom-button" id="uploadBtn">Upload</button>
-  </form>
+    </form>
+  </div>
 </div>
 
 <script>
+  localStorage.removeItem("file-id");
+
+  fetch("/pdffiles/get_user_files", {
+      headers: {
+        "Authorization": "Bearer " + JSON.parse(localStorage.getItem("user-api")).access_token
+      },
+  })
+  .then(response => response.json())
+  .then(data => {
+    const selectElement = document.getElementById("files");
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "";
+    defaultOption.textContent = "Select file";
+    selectElement.appendChild(defaultOption);
+    data.forEach(item => {
+      const option = document.createElement("option");
+      option.value = item.id;
+      option.textContent = item.filename;
+      selectElement.appendChild(option);
+    });
+
+    selectElement.addEventListener("change", function() {
+      const selectedValue = selectElement.value;
+      localStorage.setItem("file-id", selectedValue);
+      document.getElementById("goToChatBtn").disabled = false;
+
+    });
+  })
+  .catch(error => console.error(error));
+
+  document.getElementById("goToChatBtn").addEventListener("click", function(event) {
+      event.preventDefault();
+      window.location.href = "/pages/chat";
+  });
+
   document.getElementById("uploadBtn").addEventListener("click", function(event) {
       event.preventDefault();
       const file = document.getElementById("uploadInput").files[0];
       const formData = new FormData();
       formData.append("file", file);
+
       fetch("/pdffiles", {
           method: "POST",
           headers: {
