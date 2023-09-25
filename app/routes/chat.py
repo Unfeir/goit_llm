@@ -52,13 +52,13 @@ async def get_answer(
 
 
 @router.websocket('/ws/{token}')
-async def websocket_endpoint(websocket: WebSocket, token: str):
+async def websocket_endpoint(websocket: WebSocket, db: Session = Depends(get_db)):
     # logger.debug(f'{token=}')
     await manager.connect(websocket)
     while True:
         data = await websocket.receive_text()
         # logger.debug(f'{data=}')
-        response = await model_lln.get_answer(data)
+        response = await model_lln.get_answer(data, db)
 
         # await manager.broadcast(f"Client {client_id}: {data}")
         await websocket.send_text(response)
