@@ -12,6 +12,7 @@ from repository.basic import BasicCRUD
 from repository.history import HistoryCRUD
 from schemas.history import HistoryBase
 from services.auth.user import AuthUser
+from services.history_controller import HistoryController
 from services.loggs.loger import logger
 from services.pdf_controller import PDFController
 
@@ -38,78 +39,59 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 
-ADDITION = {
-            'sum': pipeline("summarization"),
-            'summary': pipeline("summarization"),
-            'summarize': pipeline("summarization"),
-            'del': PDFController.del_pdf_text,
-            'delete': PDFController.del_pdf_text,
-            'remove': PDFController.del_pdf_text,
-            'clean': '...here a function to clean history...',
-            'rub': '...here a function to clean history...',
-            'empty': '...here a function to clean history...',
-            }
-
-
 class LLMHandler:
 
     def __init__(self, model: Pipeline, addition: Optional[dict]) -> None:
-        self.db = None
         self.model = model
         self.addition = addition
-        # self.user = user
-        # self.file_id = file_id
 
-    async def get_session(self):
-        db = [db async for db in get_db()]
-        self.db = db[0]  # why 0 ? others user?!!!
-
-    async def get_answer(self, data: str) -> str:
+    async def get_answer(self, data: str, db: Session) -> str:
         """Returns an answer by model."""
-        await self.get_session()
         data_dict = json.loads(data)
-        file_id = data_dict['file_id']
-        # self.file_id = file_id
+        file_id = int(data_dict['file_id'])
         question = data_dict['text']
         token = data_dict['accessToken']
 
-        user = await AuthUser.get_current_user(token=token, db=self.db)
+        user = await AuthUser.get_current_user(token=token, db=db)
         # logger.debug(f'{user.__dict__=}')
-        pdf_text = await BasicCRUD.get_by_id(int(file_id), PDFfile, self.db)
+        pdf_text = await BasicCRUD.get_by_id(file_id, PDFfile, db)
 
         if not pdf_text or user.id != pdf_text.user_id:
             return Msg.m_404_file_not_found.value
 
         commanding_word = question.split()[0].lower()
-        # logger.warning(f'{commanding_word=}')
+        logger.warning(f'{commanding_word=}')
         if self.addition and commanding_word in self.addition:
             result = await self.run_addition(
-                                             commanding_word,
-                                             pdf_text.context,
-                                             file_id,
-                                             user,
-                                             )
+                commanding_word,
+                pdf_text.context,
+                file_id,
+                user,
+                db
+            )
 
         else:
             result = self.model(question=question, context=pdf_text.context)
 
-        if commanding_word[:3] not in 'del rem':  # 'del rem cle rub emp'
-            await self.write_answer(int(file_id), question, result.get('answer', 'None!'))  # result['answer'])
+        if commanding_word[:3] not in 'del rem cle':  # 'del rem cle rub emp'
+            await self.write_answer(int(file_id), question, result.get('answer', 'None!'), db=db)  # result['answer'])
 
-        return result['answer']  # {'answer': 'Kyiv', 'end': 39, 'score': 0.953, 'start': 31}
+        return result['answer']
 
-    async def write_answer(self, file_id: int, question: str, answer: str) -> None:
+    @staticmethod
+    async def write_answer(file_id: int, question: str, answer: str, db: Session) -> None:
         body = HistoryBase(fil_id=file_id, question=question, answer=answer or 'Done.')
         # logger.debug(f'{body=}')
-        await HistoryCRUD.create_item(History, body, self.db)
+        await HistoryCRUD.create_item(History, body, db)
 
     async def run_addition(
-                           self,
-                           command: str,
-                           text: str,
-                           file_id: int,
-                           user: User,
-                           ) -> dict:
+            self,
+            command: str,
+            text: str,
+            file_id: int,
+            user: User,
+            db: Session
+    ) -> dict:
         ad_model = self.addition[command]
         # logger.warning(f'{ad_model=}')
         # command = command[:3]
@@ -120,15 +102,15 @@ class LLMHandler:
                 return {'answer': ad_model(text, max_length=150, min_length=30, do_sample=False)[0]['summary_text']}
 
             case 'del' | 'rem':
-                await ad_model(user=user, file_id=int(file_id), db=self.db)  # await incorrect ?
+                await ad_model(user=user, file_id=int(file_id), db=db)  # await incorrect ?
                 # + remove all history of file !?
                 return {'answer': f'File({file_id}) deleted. Please return to the previous screen.'}
                 # return {'answer': '...that may be a removing file and history...'}
 
             case 'cle' | 'rub' | 'emp':
                 # remove all history of file
-                # logger.warning(f':cle {command=}')
-                return {'answer': '...that may be a clean history...'}  # remove all history of file
+                result = await ad_model(file_id=file_id, user_id=user.id, db=db)
+                return {'answer': result}  # remove all history of file
 
             case _:
                 # logger.warning(f':UNK {command=}')
@@ -136,4 +118,17 @@ class LLMHandler:
 
 
 qa_model = pipeline('question-answering', model='distilbert-base-cased-distilled-squad')
+
+ADDITION = {
+    'sum': pipeline("summarization"),
+    'summary': pipeline("summarization"),
+    'summarize': pipeline("summarization"),
+    'del': PDFController.del_pdf_text,
+    'delete': PDFController.del_pdf_text,
+    'remove': PDFController.del_pdf_text,
+    'clean': HistoryController.delete_file_history,
+    'rub': HistoryController.delete_file_history,
+    'empty': HistoryController.delete_file_history,
+}
+
 model_lln = LLMHandler(qa_model, ADDITION)
