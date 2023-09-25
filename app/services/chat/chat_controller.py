@@ -84,11 +84,11 @@ class LLMHandler:
         # logger.warning(f'{commanding_word=}')
         if self.addition and commanding_word in self.addition:
             result = await self.run_addition(
-                                       commanding_word,
-                                       pdf_text.context,
-                                       file_id,
-                                       user,
-                                       )
+                                             commanding_word,
+                                             pdf_text.context,
+                                             file_id,
+                                             user,
+                                             )
 
         else:
             result = self.model(question=question, context=pdf_text.context)
@@ -104,12 +104,12 @@ class LLMHandler:
         await HistoryCRUD.create_item(History, body, self.db)
 
     async def run_addition(
-                     self,
-                     command: str,
-                     text: str,
-                     file_id: int,
-                     user: User,
-                     ) -> dict:
+                           self,
+                           command: str,
+                           text: str,
+                           file_id: int,
+                           user: User,
+                           ) -> dict:
         ad_model = self.addition[command]
         # logger.warning(f'{ad_model=}')
         # command = command[:3]
