@@ -4,40 +4,48 @@
 <div class="login-block">
   <h1 class="login-title">Sign up</h1>
   <form>
-      <label class="login-label" for="username">Username:</label>
-      <input class="login-input" type="text" id="username" name="username" required><br><br>
-      <label class="login-label" for="email">Email:</label>
-      <input class="login-input" type="text" id="email" name="email" required><br><br>
-      <label class="login-label" for="password">Password:</label>
-      <input class="login-input" type="password" id="password" name="password" required><br><br>
-      <button class="custom-button" id="submitBtn">Sign up</button>
+    <label class="login-label" for="username">Username:</label>
+    <input class="login-input" type="text" id="username" name="username" required><br><br>
+    <label class="login-label" for="email">Email:</label>
+    <input class="login-input" type="text" id="email" name="email" required><br><br>
+    <label class="login-label" for="password">Password:</label>
+    <input class="login-input" type="password" id="password" name="password" required><br><br>
+    <button class="custom-button" id="submitBtn">Sign up</button>
   </form>
+  <div id="error" class="error"></div>
 </div>
 
 <script>
   document.getElementById("submitBtn").addEventListener("click", function(event) {
-      event.preventDefault();
-      const username = document.getElementById("username").value;
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      const body = {
-        username,
-        email,
-        password
-      }
+    event.preventDefault();
+    const username = document.getElementById("username").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    const body = {
+      username,
+      email,
+      password
+    }
 
-      fetch("/auth/signup", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(body)
-      })
-      .then(response => response.json())
-      .then(data => {
-          if (data.success) {
-              window.location.href = "/pages/login";
-          }
-      })
-      .catch(error => console.error(error));
+    fetch("/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body)
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.success) {
+        window.location.href = "/pages/login";
+      } else {
+        let message = ''
+        data.detail.forEach(item => {
+          let errorElement = document.createElement('p')
+          errorElement.textContent = item.msg
+          document.getElementById("error").appendChild(errorElement)
+        })
+      }
+    })
+    .catch(error => console.error(error));
   });
 </script>
 {% endblock %}

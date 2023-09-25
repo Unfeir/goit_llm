@@ -17,9 +17,7 @@ body {
 }
 
 .lined-background {
-
   background: linear-gradient(to bottom, #D062D1, #FFD60A);
-
 }
 
 #file-upload-input {
@@ -35,6 +33,15 @@ input[type="file"]::file-selector-button {
   border: none;
   cursor: pointer;
   text-decoration: none;
+}
+
+.custom-button:disabled {
+  background-color: #9CA3AF;
+  cursor: not-allowed;
+}
+
+.custom-button:disabled:hover {
+  background-color: #9CA3AF;
 }
 
 .custom-button:hover,
@@ -84,84 +91,10 @@ input[type="file"]::file-selector-button {
   margin: 0;
 }
 
-.upload-form {
-  margin-top: 30px;
-}
-
 .main-title {
   color: #EFEDE8;
   font-size: 44px;
   text-align: center;
-}
-
-.triangle-block {
-  width: 0;
-  height: 0;
-  border-radius: 10%;
-  border-left: 50vw solid red; /* Left border is 50% of viewport width (responsive) */
-  border-right: 0vw solid transparent; /* Right border is 50% of viewport width (responsive) */
-  border-bottom: 100px solid red;
-  border-top: 50vw solid transparent;
-}
-
-.triangle-button {
-  max-width: 1px;
-  background-color: #3498db; /* Button background color (adjust as needed) */
-  color: white; /* Text color */
-  border: none; /* Remove default button border */
-  padding: 10px 20px; /* Adjust padding as needed */
-  cursor: pointer; /* Change cursor to pointer on hover */
-  position: relative; /* Relative positioning for the pseudo-element */
-}
-
-/* Create a triangle shape using borders */
-.triangle-button::before {
-  content: "";
-  width: 0;
-  height: 0;
-  border-left: 10px solid transparent; /* Left border is transparent */
-  border-right: 10px solid transparent; /* Right border is transparent */
-  border-bottom: 20px solid #3498db; /* Bottom border matches button background color */
-  position: absolute;
-  top: -20px; /* Adjust the distance of the triangle above the button */
-  left: 50%; /* Position the triangle in the center */
-  transform: translateX(-50%); /* Center horizontally */
-}
-
-.triangle {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 0;
-  height: 0;
-  border-left: 50px solid red;
-  border-right: 0px solid red;
-  border-bottom: 10px solid red; /* Колір трикутника (замініть на потрібний) */
-  border-top: 5px solid red;
-}
-
-
-.rounded-triangle-block {
-  width: 200px; /* Adjust the width as needed */
-  height: 200px; /* Adjust the height as needed */
-  background-color: #3498db; /* Block background color (adjust as needed) */
-  position: relative; /* Relative positioning for pseudo-elements */
-  overflow: hidden; /* Hide overflow to round corners */
-}
-
-/* Create a rounded triangle shape using ::before */
-.rounded-triangle-block::before {
-  content: "";
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 0 50px 100px 50px; /* Adjust the dimensions of the triangle */
-  border-color: transparent transparent #3498db transparent; /* Triangle color */
-  top: -30px; /* Adjust the position of the triangle */
-  left: 50%;
-  transform: translateX(-50%); /* Center horizontally */
-  border-radius: 0 0 20px 20px; /* Round the bottom corners */
 }
 
 .login-block {
@@ -297,4 +230,34 @@ input[type="file"]::file-selector-button {
   border-radius: 5px;
   border: 1px solid #9CA3AF;
   flex: 1;
+}
+
+.upload-wrapper {
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
+  gap: 1rem;
+}
+
+.select-file {
+  padding: 10px 16px;
+
+}
+
+.error {
+  color: #E44A59;
+  font-size: 14px;
+  margin: 1rem 0;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border-width: 0;
 }

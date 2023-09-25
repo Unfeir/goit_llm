@@ -39,9 +39,9 @@ manager = ConnectionManager()
 
 
 ADDITION = {
-            'sum': pipeline("summarization", model='sshleifer/distilbart-cnn-12-6'),
-            'summary': pipeline("summarization", model='sshleifer/distilbart-cnn-12-6'),
-            'summarize': pipeline("summarization", model='sshleifer/distilbart-cnn-12-6'),
+            'sum': pipeline("summarization"),
+            'summary': pipeline("summarization"),
+            'summarize': pipeline("summarization"),
             'del': PDFController.del_pdf_text,
             'delete': PDFController.del_pdf_text,
             'remove': PDFController.del_pdf_text,
