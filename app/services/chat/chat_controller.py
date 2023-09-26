@@ -63,12 +63,12 @@ class LLMHandler:
         logger.warning(f'{commanding_word=}')
         if self.addition and commanding_word in self.addition:
             result = await self.run_addition(
-                commanding_word,
-                pdf_text.context,
-                file_id,
-                user,
-                db
-            )
+                                             commanding_word,
+                                             pdf_text.context,
+                                             file_id,
+                                             user,
+                                             db
+                                             )
 
         else:
             result = self.model(question=question, context=pdf_text.context)
@@ -85,13 +85,13 @@ class LLMHandler:
         await HistoryCRUD.create_item(History, body, db)
 
     async def run_addition(
-            self,
-            command: str,
-            text: str,
-            file_id: int,
-            user: User,
-            db: Session
-    ) -> dict:
+                           self,
+                           command: str,
+                           text: str,
+                           file_id: int,
+                           user: User,
+                           db: Session
+                           ) -> dict:
         ad_model = self.addition[command]
         # logger.warning(f'{ad_model=}')
         # command = command[:3]
@@ -120,15 +120,15 @@ class LLMHandler:
 qa_model = pipeline('question-answering', model='distilbert-base-cased-distilled-squad')
 
 ADDITION = {
-    'sum': pipeline("summarization"),
-    'summary': pipeline("summarization"),
-    'summarize': pipeline("summarization"),
-    'del': PDFController.del_pdf_text,
-    'delete': PDFController.del_pdf_text,
-    'remove': PDFController.del_pdf_text,
-    'clean': HistoryController.delete_file_history,
-    'rub': HistoryController.delete_file_history,
-    'empty': HistoryController.delete_file_history,
-}
+            'sum': pipeline("summarization"),
+            'summary': pipeline("summarization"),
+            'summarize': pipeline("summarization"),
+            'del': PDFController.del_pdf_text,
+            'delete': PDFController.del_pdf_text,
+            'remove': PDFController.del_pdf_text,
+            'clean': HistoryController.delete_file_history,
+            'rub': HistoryController.delete_file_history,
+            'empty': HistoryController.delete_file_history,
+            }
 
 model_lln = LLMHandler(qa_model, ADDITION)
