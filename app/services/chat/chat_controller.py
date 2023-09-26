@@ -45,7 +45,7 @@ class LLMHandler:
         self.model = model
         self.addition = addition
 
-    async def get_answer(self, data: str, db: Session) -> str | dict:
+    async def get_answer(self, data: str, db: Session) -> str:
         """Returns an answer by model."""
         data_dict = json.loads(data)
         file_id = int(data_dict['file_id'])
@@ -63,18 +63,18 @@ class LLMHandler:
         logger.warning(f'{commanding_word=}')
         if self.addition and commanding_word in self.addition:
             result = await self.run_addition(
-                commanding_word,
-                pdf_text.context,
-                file_id,
-                user,
-                db
-            )
+                                             commanding_word,
+                                             pdf_text.context,
+                                             file_id,
+                                             user,
+                                             db
+                                             )
 
         else:
             result = self.model(question=question, context=pdf_text.context)
 
         if commanding_word[:3] not in 'del rem cle':  # 'del rem cle rub emp'
-            await self.write_answer(int(file_id), question, result.get('answer', 'None!'), db=db)  # result['answer'])
+            await self.write_answer(int(file_id), question, result.get('answer', 'None!'), db=db)
 
         return result['answer']
 
@@ -85,13 +85,13 @@ class LLMHandler:
         await HistoryCRUD.create_item(History, body, db)
 
     async def run_addition(
-            self,
-            command: str,
-            text: str,
-            file_id: int,
-            user: User,
-            db: Session
-    ) -> dict:
+                           self,
+                           command: str,
+                           text: str,
+                           file_id: int,
+                           user: User,
+                           db: Session
+                           ) -> dict:
         ad_model = self.addition[command]
         # logger.warning(f'{ad_model=}')
         # command = command[:3]
@@ -102,13 +102,10 @@ class LLMHandler:
                 return {'answer': ad_model(text, max_length=150, min_length=30, do_sample=False)[0]['summary_text']}
 
             case 'del' | 'rem':
-                await ad_model(user=user, file_id=int(file_id), db=db)  # await incorrect ?
-                # + remove all history of file !?
-                return {'answer': f'File({file_id}) deleted. Please return to the previous screen.'}
-                # return {'answer': '...that may be a removing file and history...'}
+                await ad_model(user=user, file_id=int(file_id), db=db)
+                return {'answer': f'File({file_id}) deleted. Please return to the previous screen.'}  # remove file
 
             case 'cle' | 'rub' | 'emp':
-                # remove all history of file
                 result = await ad_model(file_id=file_id, user_id=user.id, db=db)
                 return {'answer': result}  # remove all history of file
 
@@ -120,15 +117,15 @@ class LLMHandler:
 qa_model = pipeline('question-answering', model='distilbert-base-cased-distilled-squad')
 
 ADDITION = {
-    'sum': pipeline("summarization"),
-    'summary': pipeline("summarization"),
-    'summarize': pipeline("summarization"),
-    'del': PDFController.del_pdf_text,
-    'delete': PDFController.del_pdf_text,
-    'remove': PDFController.del_pdf_text,
-    'clean': HistoryController.delete_file_history,
-    'rub': HistoryController.delete_file_history,
-    'empty': HistoryController.delete_file_history,
-}
+            'sum': pipeline("summarization"),
+            'summary': pipeline("summarization"),
+            'summarize': pipeline("summarization"),
+            'del': PDFController.del_pdf_text,
+            'delete': PDFController.del_pdf_text,
+            'remove': PDFController.del_pdf_text,
+            'clean': HistoryController.delete_file_history,
+            'rub': HistoryController.delete_file_history,
+            'empty': HistoryController.delete_file_history,
+            }
 
 model_lln = LLMHandler(qa_model, ADDITION)

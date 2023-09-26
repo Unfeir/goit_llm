@@ -14,16 +14,15 @@ class HistoryController:
 
     @staticmethod
     async def get_file_history(
-            file_id: int,
-            user_id: int,
-            skip: int,
-            limit: int,
-            db: Session
-    ) -> List[Optional[HistoryResponse]]:
+                               file_id: int,
+                               user_id: int,
+                               skip: int,
+                               limit: int,
+                               db: Session
+                               ) -> List[Optional[HistoryResponse]]:
         file = await HistoryCRUD.get_by_id(file_id, PDFfile, db)
         if not file:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=Msg.m_404_file_not_found.value)
-
 
         if user_id != file.user_id:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=Msg.m_403_foreign_file.value)
@@ -45,4 +44,5 @@ class HistoryController:
             return 'Its not you file'
 
         result = await HistoryCRUD.delete_by_file(file_id, db)
+
         return f'history was deleted' if result else 'something went wrong'
