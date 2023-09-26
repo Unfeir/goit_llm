@@ -60,7 +60,7 @@ class LLMHandler:
             return Msg.m_404_file_not_found.value
 
         commanding_word = question.split()[0].lower()
-        logger.warning(f'{commanding_word=}')
+        # logger.warning(f'{commanding_word=}')
         if self.addition and commanding_word in self.addition:
             result = await self.run_addition(
                                              commanding_word,
