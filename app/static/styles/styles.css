@@ -5,19 +5,21 @@ body {
 }
 
 .accent {
-  color: #9C6FE2;
+  color: #CF61CF;
 }
 
 .content {
   height: 100vh;
 }
 
-.dotted-background {
-  background: linear-gradient(to bottom, #FFD60A, #D062D1);
+.up-background {
+  height: 50%;
+  background: linear-gradient(to bottom, #040404, #D062D1);
 }
 
-.lined-background {
-  background: linear-gradient(to bottom, #D062D1, #FFD60A);
+.down-background {
+  height: 50%;
+  background: linear-gradient(to bottom, #D062D1, #040404);
 }
 
 #file-upload-input {
@@ -58,6 +60,25 @@ input[type="file"]::file-selector-button {
   top: -20px;
 }
 
+.primary-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 6rem;
+  height: 3rem;
+  background-color: #623771;
+  color: #fff;
+  font-size: 1.2rem;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.primary-button:hover {
+  background-color: #ea41a6
+}
+
 .block-centered {
   display: flex;
   justify-content: center;
@@ -69,6 +90,7 @@ input[type="file"]::file-selector-button {
 
 .up-block {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   width: 100%;
@@ -93,8 +115,17 @@ input[type="file"]::file-selector-button {
 
 .main-title {
   color: #EFEDE8;
-  font-size: 44px;
+  font-size: 54px;
   text-align: center;
+}
+
+.login-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
 }
 
 .login-block {
@@ -102,13 +133,21 @@ input[type="file"]::file-selector-button {
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh;
+  width: 400px;
+  padding: 1rem;
+  background-color: #EFEDE8;
+  border-radius: 5px;
+  border: 1px solid #9CA3AF;
+}
+
+.login-block--wide {
+  width: 655px;
 }
 
 .login-title {
   font-size: 44px;
   font-weight: 600;
-  margin: 0;
+  margin: 0 0 1rem;
 }
 
 .login-label {
@@ -127,6 +166,22 @@ input[type="file"]::file-selector-button {
   outline: none;
 }
 
+.login-footer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin-top: 1rem;
+}
+
+.upload-title {
+  margin-bottom: 2rem;
+  color: #EFEDE8;
+  font-size: 44px;
+  font-weight: 600;
+}
+
 .upload-input {
   width: 100%;
   height: 40px;
@@ -140,6 +195,7 @@ input[type="file"]::file-selector-button {
   display: flex;
   flex-direction: column;
   padding: 1rem;
+  background-color: #EFEDE8;
   border-radius: 5px;
   gap: 1rem;
   border: 1px solid #9CA3AF;
@@ -156,15 +212,11 @@ input[type="file"]::file-selector-button {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 30%;
   margin-bottom: 1rem;
   padding: 1rem;
+  background-color: #EFEDE8;
   border-radius: 5px;
   border: 1px solid #9CA3AF;
-}
-
-.chat-profile {
-
 }
 
 .chat-title {
@@ -173,15 +225,12 @@ input[type="file"]::file-selector-button {
   margin: 0;
 }
 
-.chat-file {
-
-}
-
 .messages-block {
   display: flex;
   flex-direction: column;
   max-height: calc(100% - 8.25rem);
   padding: 2rem;
+  background-color: #EFEDE8;
   border-radius: 5px;
   border: 1px solid #9CA3AF;
   flex: 1;
@@ -260,4 +309,38 @@ input[type="file"]::file-selector-button {
   clip: rect(0 0 0 0);
   white-space: nowrap;
   border-width: 0;
+}
+
+.description-block {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 75vw;
+  color: #EFEDE8;
+}
+
+.description-title {
+  font-size: 34px;
+  font-weight: 600;
+  margin: 0;
+  text-align: center;
+}
+
+.description {
+  font-size: 16px;
+  font-weight: 400;
+  margin: 0;
+  text-align: center;
+}
+
+.position-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.d-flex {
+  display: flex;
 }

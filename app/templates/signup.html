@@ -1,18 +1,26 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="login-block">
-  <h1 class="login-title">Sign up</h1>
-  <form>
-    <label class="login-label" for="username">Username:</label>
-    <input class="login-input" type="text" id="username" name="username" required><br><br>
-    <label class="login-label" for="email">Email:</label>
-    <input class="login-input" type="text" id="email" name="email" required><br><br>
-    <label class="login-label" for="password">Password:</label>
-    <input class="login-input" type="password" id="password" name="password" required><br><br>
-    <button class="custom-button" id="submitBtn">Sign up</button>
-  </form>
-  <div id="error" class="error"></div>
+<div class="up-background"></div>
+<div class="down-background"></div>
+<div class="login-wrapper position-wrapper">
+  <div class="login-block">
+    <h1 class="login-title">Sign up</h1>
+    <form>
+      <label class="login-label" for="username">Username:</label>
+      <input class="login-input" type="text" id="username" name="username" required><br><br>
+      <label class="login-label" for="email">Email:</label>
+      <input class="login-input" type="text" id="email" name="email" required><br><br>
+      <label class="login-label" for="password">Password:</label>
+      <input class="login-input" type="password" id="password" name="password" required><br><br>
+      <button class="custom-button" id="submitBtn">Sign up</button>
+    </form>
+    <div id="error" class="error"></div>
+    <div class="login-footer">
+      <p>If you are already registered, please login here</p>
+      <a class="custom-button" href="/pages/login">Login</a>
+    </div>
+  </div>
 </div>
 
 <script>

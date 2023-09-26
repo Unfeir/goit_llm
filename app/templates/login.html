@@ -1,17 +1,24 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="login-block">
-  <h1 class="login-title">Login</h1>
-  <form id="loginForm">
-      <label class="login-label" for="username">Username:</label>
-      <input class="login-input" type="text" id="username" name="username" required><br><br>
-      <label class="login-label" for="password">Password:</label>
-      <input class="login-input" type="password" id="password" name="password" required><br><br>
-      <button class="custom-button" id="submitBtn">Login</button>
-  </form>
-  <div id="error" class="error"></div>
-  <a class="custom-button" href="/pages/signup">Sign up</a>
+<div class="up-background"></div>
+<div class="down-background"></div>
+<div class="login-wrapper position-wrapper">
+  <div class="login-block">
+    <h1 class="login-title">Login</h1>
+    <form id="loginForm">
+        <label class="login-label" for="username">Username:</label>
+        <input class="login-input" type="text" id="username" name="username" required><br><br>
+        <label class="login-label" for="password">Password:</label>
+        <input class="login-input" type="password" id="password" name="password" required><br><br>
+        <button class="custom-button" id="submitBtn">Login</button>
+    </form>
+    <div id="error" class="error"></div>
+    <div class="login-footer">
+      <p>If you are not registered, please register here</p>
+      <a class="custom-button" href="/pages/signup">Sign up</a>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -41,7 +48,6 @@
       })
       .then(response => response.json())
       .then(data => {
-        console.log('data', data)
           localStorage.setItem("user-api", JSON.stringify(data));
           if (data.success) {
               window.location.href = "/pages/upload";

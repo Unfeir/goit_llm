@@ -45,4 +45,4 @@ class HistoryController:
             return 'Its not you file'
 
         result = await HistoryCRUD.delete_by_file(file_id, db)
-        return f'history was delete' if result else 'something going wrong'
+        return f'history was deleted' if result else 'something went wrong'

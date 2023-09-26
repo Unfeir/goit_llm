@@ -45,7 +45,7 @@ class LLMHandler:
         self.model = model
         self.addition = addition
 
-    async def get_answer(self, data: str, db: Session) -> str:
+    async def get_answer(self, data: str, db: Session) -> str | dict:
         """Returns an answer by model."""
         data_dict = json.loads(data)
         file_id = int(data_dict['file_id'])

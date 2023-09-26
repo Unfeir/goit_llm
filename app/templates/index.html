@@ -1,19 +1,31 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="up-block dotted-background">
+<div class="up-block up-background">
+    <div class="description-block">
+        <h2 class="description-title">
+            Welcome to the future of document interaction and information retrieval!
+        </h2>
+    </div>
     <h1 class="main-title">Chat <span class="accent">PDF</span></h1>
 </div>
-<div class="down-block lined-background">
+<div class="down-block down-background">
     <div class="block-centered">
         <a
-            class="custom-button"
+            class="primary-button"
             href="/pages/login"
         >Login</a>
         <a
-            class="custom-button"
+            class="primary-button"
             href="/pages/signup"
         >Sign up</a>
+    </div>
+    <div class="description-block">
+        <p class="description">
+            Our cutting-edge application seamlessly combines the power of PDF files and state-of-the-art Large Language Models (LLMs) to revolutionize how you work with textual documents.
+            Gone are the days of tediously scrolling through lengthy PDFs to find the information you need.
+            With our application, you can harness the intelligence of LLMs to read and comprehend PDF files, making it effortless to extract valuable insights, answers, and knowledge from your documents.
+        </p>
     </div>
 </div>
 {% endblock %}

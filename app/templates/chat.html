@@ -1,23 +1,33 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="chat-body">
-    <div class="chat-header">
-        <a class="custom-button" href="/pages/upload">Go back</a>
-        <div class="chat-profile" id="profile"></div>
-        <h4 class="chat-title"> Chat PDF </h4>
-        <div class="chat-file" id="file"></div>
+<div class="up-background"></div>
+<div class="down-background"></div>
+    <div class="chat-body position-wrapper">
+        <div class="chat-header">
+            <a class="custom-button" href="/pages/upload">Go back</a>
+            <h4 class="chat-title">Chat <span class="accent">PDF</span></h4>
+            <div>
+                <div class="d-flex">
+                    <div>User: &nbsp;</div>
+                    <div class="chat-profile" id="profile"></div>
+                </div>
+                <div class="d-flex">
+                    <div>File: &nbsp;</div>
+                    <div class="chat-file" id="file"></div>
+                </div>
+            </div>
+        </div>
+        <div class="messages-block">
+            <ul class="messages-list" id="messages">
+            </ul>
+            <div id="loader" class="loader visually-hidden">LLM is thinking...</div>
+            <form class="message-form" id="chat-form">
+                <input id="messageText" type="text" class="message-input" placeholder="Write your message">
+                <button id="send" class="custom-button">Send</button>
+            </form>
+        </div>
     </div>
-    <div class="messages-block">
-        <ul class="messages-list" id="messages">
-        </ul>
-        <div id="loader" class="loader visually-hidden">LLM is thinking...</div>
-        <form class="message-form" id="chat-form">
-            <input id="messageText" type="text" class="message-input" placeholder="Write your message">
-            <button id="send" class="custom-button">Send</button>
-        </form>
-    </div>
-</div>
 
 <script>
     const token = JSON.parse(localStorage.getItem("user-api")).access_token;
@@ -51,10 +61,9 @@
     .then(response => response.json())
     .then(data => {
         data.forEach(item => {
-            console.log('item', item)
             Object.keys(item).forEach(key => {
+                var messages = document.getElementById('messages')
                 if (key === 'question') {
-                    var messages = document.getElementById('messages')
                     var message = document.createElement('li')
                     message.classList.add('message-item', 'question')
                     var content = document.createTextNode(item.question)
@@ -62,13 +71,13 @@
                     messages.appendChild(message);
                 }
                 if (key === 'answer') {
-                    var messages = document.getElementById('messages')
                     var message = document.createElement('li')
                     message.classList.add('message-item', 'answer')
                     var content = document.createTextNode(item.answer)
                     message.appendChild(content);
                     messages.appendChild(message);
                 }
+                messages.scrollTop = messages.scrollHeight;
             })
         })
     });
@@ -76,6 +85,17 @@
     var ws = new WebSocket(`ws://localhost:8000/chat/ws/${token}`);
 
     function processMessage(event) {
+        if (event.data === "history was deleted") {
+            document.getElementById('messages').innerHTML = '';
+            document.getElementById("loader").classList.add("visually-hidden");
+            var messages = document.getElementById('messages')
+            var message = document.createElement('li')
+            message.classList.add('message-item', 'answer')
+            var content = document.createTextNode(event.data)
+            message.appendChild(content);
+            messages.appendChild(message);
+            return
+        }
         document.getElementById("loader").classList.add("visually-hidden");
         var messages = document.getElementById('messages')
         var message = document.createElement('li')
@@ -83,10 +103,10 @@
         var content = document.createTextNode(event.data)
         message.appendChild(content);
         messages.appendChild(message);
+        messages.scrollTop = messages.scrollHeight;
     }
 
     ws.onmessage = processMessage;
-
 
     function sendMessage(event) {
         event.preventDefault();
@@ -106,7 +126,7 @@
 
         ws.send(JSON.stringify(messageWithToken));
         input.value = ''
-        event.preventDefault()
+        messages.scrollTop = messages.scrollHeight;
     }
 
     document.querySelector("#send").addEventListener("click", sendMessage);

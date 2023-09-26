@@ -1,8 +1,10 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="login-block">
-  <h1 class="login-title">Upload file and start chat</h1>
+<div class="up-background"></div>
+<div class="down-background"></div>
+<div class="login-wrapper position-wrapper">
+  <h1 class="upload-title">Upload file and start chat</h1>
   <div class="upload-wrapper">
     <div class="upload-form">
       <select class="select-file" name="files" id="files"></select>
@@ -18,11 +20,10 @@
 
 <script>
   localStorage.removeItem("file-id");
-
   fetch("/pdffiles/get_user_files", {
       headers: {
         "Authorization": "Bearer " + JSON.parse(localStorage.getItem("user-api")).access_token
-      },
+      }
   })
   .then(response => response.json())
   .then(data => {
@@ -37,12 +38,10 @@
       option.textContent = item.filename;
       selectElement.appendChild(option);
     });
-
     selectElement.addEventListener("change", function() {
       const selectedValue = selectElement.value;
       localStorage.setItem("file-id", selectedValue);
       document.getElementById("goToChatBtn").disabled = false;
-
     });
   })
   .catch(error => console.error(error));
@@ -74,6 +73,5 @@
       })
       .catch(error => console.error(error));
   });
-
 </script>
 {% endblock %}
