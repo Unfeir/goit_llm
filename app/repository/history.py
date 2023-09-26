@@ -13,22 +13,22 @@ class HistoryCRUD(BasicCRUD):
     @classmethod
     async def get_by_file(cls, file_id: int, skip: int, limit: int, db: Session) -> List[Optional[HistoryResponse]]:
         files = await db.execute(
-            select(History)
-            .join(PDFfile, PDFfile.id == History.fil_id)
-            .where(PDFfile.id == file_id)
-            .offset(skip)
-            .limit(limit)
-        )
+                                 select(History)
+                                 .join(PDFfile, PDFfile.id == History.fil_id)
+                                 .where(PDFfile.id == file_id)
+                                 .offset(skip)
+                                 .limit(limit)
+                                 )
 
         return files.scalars().all()
 
     @classmethod
     async def delete_by_file(cls, file_id: int, db: Session) -> bool:
         items = await db.execute(
-            select(History)
-            .join(PDFfile, PDFfile.id == History.fil_id)
-            .where(PDFfile.id == file_id)
-        )
+                                 select(History)
+                                 .join(PDFfile, PDFfile.id == History.fil_id)
+                                 .where(PDFfile.id == file_id)
+                                 )
 
         items = items.scalars().all()
         if items:

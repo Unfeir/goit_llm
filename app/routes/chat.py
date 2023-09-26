@@ -52,7 +52,7 @@ async def get_answer(
 
 
 @router.websocket('/ws/{token}')
-async def websocket_endpoint(websocket: WebSocket, db: Session = Depends(get_db)):
+async def websocket_endpoint(websocket: WebSocket, db: Session = Depends(get_db)):  # token: str
     # logger.debug(f'{token=}')
     await manager.connect(websocket)
     while True:
