@@ -5,6 +5,8 @@ from fastapi import WebSocket
 from sqlalchemy.orm import Session
 from transformers import Pipeline, pipeline
 
+from conf.messages import Msg
+from db.models import History, PDFfile, User
 from repository.basic import BasicCRUD
 from repository.history import HistoryCRUD
 from schemas.history import HistoryBase
@@ -12,8 +14,6 @@ from services.auth.user import AuthUser
 from services.history_controller import HistoryController
 from services.loggs.loger import logger
 from services.pdf_controller import PDFController
-from conf.messages import Msg
-from db.models import History, PDFfile, User
 
 
 class ConnectionManager:
