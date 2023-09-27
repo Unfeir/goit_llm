@@ -1,6 +1,6 @@
 from typing import List, Optional
 
-from fastapi import APIRouter, Depends, Security, Query
+from fastapi import APIRouter, Depends, Query, Security
 from fastapi.security import HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 
@@ -10,7 +10,6 @@ from schemas.history import HistoryResponse
 from services.auth.user import AuthUser, security
 from services.history_controller import HistoryController
 from services.roles import allowed_all_roles_access
-
 
 router = APIRouter(prefix='/history', tags=['history'])
 

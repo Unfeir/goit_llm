@@ -1,5 +1,5 @@
 import hashlib
-from typing import BinaryIO
+from typing import Any, BinaryIO
 
 import cloudinary
 
@@ -15,19 +15,19 @@ class CloudImage:
                       )
 
     @classmethod
-    def generate_avatar_name(cls, email: str, typ: str):
+    def generate_avatar_name(cls, email: str, typ: str) -> str:
         image_name = hashlib.sha256(email.encode('utf-8')).hexdigest()[:12]
 
         return f'{typ.upper()}-AVATARS/{image_name}'
 
     @classmethod
-    def get_url_for_avatar(cls, public_id):
+    def get_url_for_avatar(cls, public_id) -> Any:
         src_url = cloudinary.CloudinaryImage(public_id).build_url()
 
         return src_url
 
     @classmethod
-    def avatar_upload(cls, file: BinaryIO, typ: str, email: str):
+    def avatar_upload(cls, file: BinaryIO, typ: str, email: str) -> Any:
         avatar_id = cls.generate_avatar_name(email, typ)
         cloudinary.uploader.upload(file, public_id=avatar_id, overwrite=True)
 

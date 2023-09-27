@@ -1,13 +1,14 @@
+from typing import Any
+
+import uvicorn
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-import uvicorn
 
 from conf.config import get_settings
 from routes import auth, chat, history, pages, pdffile, users
 from services.loggs.loger import logger
-
 
 credentials = get_settings()
 
@@ -38,7 +39,7 @@ app.add_middleware(
 
 
 @app.get('/')
-def get_index_page(request: Request):
+def get_index_page(request: Request) -> Any:
     return templates.TemplateResponse('index.html', {'request': request})
 
 

@@ -1,6 +1,6 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, File, Query, Security, status, UploadFile
+from fastapi import APIRouter, Depends, File, Query, Security, UploadFile, status
 from fastapi.security import HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 
@@ -69,7 +69,7 @@ async def del_pdf_text(
             )
 async def get_pdf_text(
                        skip: int = 0,
-                       limit: int = 10,
+                       limit: int = 30,
                        current_user: User = Depends(AuthUser.get_current_user),
                        credentials: HTTPAuthorizationCredentials = Security(security),
                        db: Session = Depends(get_db)
