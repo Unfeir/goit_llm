@@ -109,6 +109,14 @@ class LLMHandler:
                 result = await ad_model(file_id=file_id, user_id=user.id, db=db)
                 return {'answer': result}  # remove all history of file
 
+            case '?' | 'hel':
+                # logger.warning(f':UNK {command=}')
+                return {'answer': ad_model}
+
+            case 'hi' | 'hel':  # Oops double `hel` :-)
+                # logger.warning(f':UNK {command=}')
+                return {'answer': ad_model}
+
             case _:
                 # logger.warning(f':UNK {command=}')
                 return {'answer': 'Something is WRONG!'}
@@ -117,7 +125,7 @@ class LLMHandler:
 qa_model = pipeline('question-answering', model='distilbert-base-cased-distilled-squad')
 
 ADDITION = {
-            'sum': pipeline("summarization"),
+            'sum': pipeline("summarization"),  # model='sshleifer/distilbart-cnn-12-6'),
             'summary': pipeline("summarization"),
             'summarize': pipeline("summarization"),
             'del': PDFController.del_pdf_text,
@@ -126,6 +134,14 @@ ADDITION = {
             'clean': HistoryController.delete_file_history,
             'rub': HistoryController.delete_file_history,
             'empty': HistoryController.delete_file_history,
+            '?': 'Type: `sum` or `summary` or `summarize` to get the SUMMARY; '
+                 'Type: `del` or `delete` or `remove` to remove PDF file; '
+                 'Type: `clean` or `rub` or `empty` to clean history log.',
+            'help': 'Type: `sum` or `summary` or `summarize` to get the SUMMARY; '
+                 'Type: `del` or `delete` or `remove` to remove PDF file; '
+                 'Type: `clean` or `rub` or `empty` to clean history log.',
+            'hello': 'Welcome to ChatPDF by Fast Rabbit Team!',
+            'hi': 'Welcome to ChatPDF by Fast Rabbit Team!',
             }
 
 model_lln = LLMHandler(qa_model, ADDITION)
