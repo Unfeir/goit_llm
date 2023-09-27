@@ -1,13 +1,10 @@
 import json
 from typing import List, Optional
 
-from fastapi import WebSocket, Depends
+from fastapi import WebSocket
 from sqlalchemy.orm import Session
-from transformers import pipeline, Pipeline
+from transformers import Pipeline, pipeline
 
-from conf.messages import Msg
-from db.db import get_db
-from db.models import History, PDFfile, User
 from repository.basic import BasicCRUD
 from repository.history import HistoryCRUD
 from schemas.history import HistoryBase
@@ -15,24 +12,24 @@ from services.auth.user import AuthUser
 from services.history_controller import HistoryController
 from services.loggs.loger import logger
 from services.pdf_controller import PDFController
+from conf.messages import Msg
+from db.models import History, PDFfile, User
 
 
 class ConnectionManager:
     def __init__(self) -> None:
         self.connections: List[WebSocket] = []
 
-    async def connect(self, websocket: WebSocket):
+    async def connect(self, websocket: WebSocket) -> None:
         await websocket.accept()
         self.connections.append(websocket)
+        logger.debug(f'connection  created {websocket=}')
 
-    def disconnect(self, websocket: WebSocket, user: str):
+    def disconnect(self, websocket: WebSocket, user: str) -> None:
         self.connections.remove((websocket, user))
 
-    async def broadcast(self, data: str):
-        # logger.debug(f'{data=}')
-        # logger.debug(f'{self.connections=}')
+    async def broadcast(self, data: str) -> None:
         for connection in self.connections:
-            # logger.debug(f'{connection=}')
             await connection.send_text(data)
 
 
@@ -53,14 +50,12 @@ class LLMHandler:
         token = data_dict['accessToken']
 
         user = await AuthUser.get_current_user(token=token, db=db)
-        # logger.debug(f'{user.__dict__=}')
         pdf_text = await BasicCRUD.get_by_id(file_id, PDFfile, db)
 
         if not pdf_text or user.id != pdf_text.user_id:
             return Msg.m_404_file_not_found.value
 
         commanding_word = question.split()[0].lower()
-        # logger.warning(f'{commanding_word=}')
         if self.addition and commanding_word in self.addition:
             result = await self.run_addition(
                                              commanding_word,
@@ -81,7 +76,6 @@ class LLMHandler:
     @staticmethod
     async def write_answer(file_id: int, question: str, answer: str, db: Session) -> None:
         body = HistoryBase(fil_id=file_id, question=question, answer=answer or 'Done.')
-        # logger.debug(f'{body=}')
         await HistoryCRUD.create_item(History, body, db)
 
     async def run_addition(
@@ -93,9 +87,6 @@ class LLMHandler:
                            db: Session
                            ) -> dict:
         ad_model = self.addition[command]
-        # logger.warning(f'{ad_model=}')
-        # command = command[:3]
-        # logger.warning(f':3 {command=}')
         match command[:3]:
             case 'sum':
                 # do_sample=False -> ensures that the generated summary is deterministic (non-random)
@@ -110,15 +101,12 @@ class LLMHandler:
                 return {'answer': result}  # remove all history of file
 
             case '?' | 'hel':
-                # logger.warning(f':UNK {command=}')
                 return {'answer': ad_model}
 
             case 'hi' | 'hel':  # Oops double `hel` :-)
-                # logger.warning(f':UNK {command=}')
                 return {'answer': ad_model}
 
             case _:
-                # logger.warning(f':UNK {command=}')
                 return {'answer': 'Something is WRONG!'}
 
 

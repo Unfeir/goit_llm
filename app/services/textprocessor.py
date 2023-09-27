@@ -1,12 +1,10 @@
-from fastapi import HTTPException, status
-from sqlalchemy.orm import Session
-from transformers import pipeline
-
 from conf.messages import Msg
 from db.models import PDFfile, Question, User
+from fastapi import HTTPException, status
 from repository.basic import BasicCRUD
-from schemas.chat import ChatResponse, ChatRequest
-
+from schemas.chat import ChatRequest, ChatResponse
+from sqlalchemy.orm import Session
+from transformers import pipeline
 
 qa_model = pipeline('question-answering', model='distilbert-base-cased-distilled-squad')
 

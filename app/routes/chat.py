@@ -1,17 +1,12 @@
-# from typing import Any, Annotated
-
 from fastapi import APIRouter, Depends, Query, Security, WebSocket
 from fastapi.security import HTTPAuthorizationCredentials
-# from starlette.responses import RedirectResponse
 from sqlalchemy.orm import Session
 
 from db.db import get_db
 from db.models import User
-# from services.auth.token import AuthToken
 from schemas.chat import ChatRequest, ChatResponse
 from services.auth.user import AuthUser, security
 from services.chat.chat_controller import manager, model_lln
-from services.loggs.loger import logger
 from services.roles import allowed_all_roles_access
 from services.textprocessor import RequestAnalyzer
 
@@ -53,12 +48,8 @@ async def get_answer(
 
 @router.websocket('/ws/{token}')
 async def websocket_endpoint(websocket: WebSocket, db: Session = Depends(get_db)):  # token: str
-    # logger.debug(f'{token=}')
     await manager.connect(websocket)
     while True:
         data = await websocket.receive_text()
-        # logger.debug(f'{data=}')
         response = await model_lln.get_answer(data, db)
-
-        # await manager.broadcast(f"Client {client_id}: {data}")
         await websocket.send_text(response)
